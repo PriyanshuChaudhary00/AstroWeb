@@ -29,6 +29,7 @@ function Router() {
       <main className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
+          <Route path="/products" component={Products} />
           <Route path="/products/:category" component={Products} />
           <Route path="/product/:id" component={ProductDetail} />
           <Route path="/cart" component={Cart} />
