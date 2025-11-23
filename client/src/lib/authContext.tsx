@@ -1,9 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { supabase } from "./supabase";
-import type { User } from "@supabase/supabase-js";
+import { mockAuth, type MockUser } from "./mockAuth";
+
+interface AuthUser {
+  id: string;
+  email: string;
+}
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
   isAdmin: boolean;
   signUp: (email: string, password: string) => Promise<void>;
@@ -14,14 +18,22 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
+        // Try to get current user from mock auth (localStorage)
+        const currentUser = await mockAuth.getCurrentUser();
+        if (currentUser) {
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email
+          });
+        } else {
+          setUser(null);
+        }
       } catch (error) {
         console.error("Auth check error:", error);
         setUser(null);
@@ -32,29 +44,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => subscription?.unsubscribe();
+    // Listen for storage changes
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    try {
+      const newUser = await mockAuth.signUp(email, password);
+      setUser({
+        id: newUser.id,
+        email: newUser.email
+      });
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    try {
+      const authenticatedUser = await mockAuth.signIn(email, password);
+      setUser({
+        id: authenticatedUser.id,
+        email: authenticatedUser.email
+      });
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      await mockAuth.signOut();
+      setUser(null);
+    } catch (error: any) {
+      throw error;
+    }
   };
 
-  const isAdmin = user?.email?.endsWith("@admin.divine") || user?.email === "admin@example.com";
+  const isAdmin = user?.email === "admin@example.com" || user?.email?.endsWith("@admin.divine");
 
   return (
     <AuthContext.Provider value={{ user, loading, isAdmin, signUp, signIn, signOut }}>
