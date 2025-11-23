@@ -22,6 +22,7 @@ import Videos from "@/pages/Videos";
 import SignUp from "@/pages/SignUp";
 import Login from "@/pages/Login";
 import Profile from "@/pages/Profile";
+import ConfirmEmail from "@/pages/ConfirmEmail";
 import AdminDashboard from "@/pages/AdminDashboard";
 import PolicyPage from "@/pages/PolicyPage";
 import NotFound from "@/pages/not-found";
@@ -58,6 +59,7 @@ function Router() {
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
           <Route path="/profile" component={Profile} />
+          <Route path="/confirm-email" component={ConfirmEmail} />
           <Route path="/admin" component={() => <ProtectedAdminRoute component={AdminDashboard} />} />
           <Route path="/privacy-policy" component={() => <PolicyPage />} />
           <Route path="/terms" component={() => <PolicyPage />} />
