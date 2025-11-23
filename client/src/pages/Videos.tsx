@@ -4,17 +4,16 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Play, ExternalLink } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/authContext";
 import type { Video } from "@shared/schema";
 
 export default function Videos() {
-  const { user, isLoading, isAuthenticated } = useAuth();
-  const isAdmin = user?.email?.endsWith("@admin.divine") || user?.email === "admin@example.com";
+  const { user, isAdmin } = useAuth();
   const [showAddForm, setShowAddForm] = useState(false);
   const [videoTitle, setVideoTitle] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
 
-  const { data: videos, isLoading: isVideosLoading, refetch } = useQuery<Video[]>({
+  const { data: videos, isLoading, refetch } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
     queryFn: async () => {
       const response = await fetch("/api/videos");
@@ -84,7 +83,7 @@ export default function Videos() {
           </div>
 
           {/* Add Video Form - Only for Admins */}
-          {isAuthenticated && isAdmin && (
+          {user && isAdmin && (
             <div className="max-w-2xl mx-auto mb-8">
               {!showAddForm ? (
                 <Button 
@@ -148,7 +147,7 @@ export default function Videos() {
       {/* Videos Grid */}
       <section className="py-12 md:py-20 px-4">
         <div className="container mx-auto">
-          {isVideosLoading ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-muted animate-pulse rounded-lg h-64" />

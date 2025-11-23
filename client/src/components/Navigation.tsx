@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { ShoppingCart, Menu, X, Sparkles, Phone, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/authContext";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -21,8 +21,7 @@ interface NavigationProps {
 export function Navigation({ cartItemCount }: NavigationProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
-  const isAdmin = user?.email?.endsWith("@admin.divine") || user?.email === "admin@example.com";
+  const { user, isAdmin, signOut } = useAuth();
 
   const productCategories = [
     { name: "Gemstones", href: "/products/gemstones", description: "Certified natural gemstones" },
@@ -119,7 +118,7 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
 
-            {isAuthenticated ? (
+            {user ? (
               <div className="flex items-center gap-2">
                 <Link href="/profile">
                   <Button variant="ghost" size="icon" data-testid="button-profile">
@@ -129,20 +128,25 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  onClick={() => window.location.href = "/api/logout"}
+                  onClick={() => signOut()}
                   data-testid="button-logout"
                 >
                   <LogOut className="h-5 w-5" />
                 </Button>
               </div>
             ) : (
-              <Button 
-                size="sm" 
-                onClick={() => window.location.href = "/api/login"}
-                data-testid="button-login"
-              >
-                Login
-              </Button>
+              <div className="flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="outline" size="sm" data-testid="button-login">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" data-testid="button-signup">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
             )}
 
             {/* Mobile Menu */}
@@ -199,7 +203,7 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                   </div>
 
                   <div className="border-t pt-4 space-y-2">
-                    {isAuthenticated ? (
+                    {user ? (
                       <>
                         <Link href="/profile">
                           <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-profile">
@@ -218,7 +222,7 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                           variant="outline" 
                           className="w-full justify-start"
                           onClick={() => {
-                            window.location.href = "/api/logout";
+                            signOut();
                             setMobileMenuOpen(false);
                           }}
                           data-testid="button-mobile-logout"
@@ -228,16 +232,18 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                         </Button>
                       </>
                     ) : (
-                      <Button 
-                        className="w-full justify-start"
-                        onClick={() => {
-                          window.location.href = "/api/login";
-                          setMobileMenuOpen(false);
-                        }} 
-                        data-testid="link-mobile-login"
-                      >
-                        Login
-                      </Button>
+                      <>
+                        <Link href="/login">
+                          <Button variant="outline" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-login">
+                            Login
+                          </Button>
+                        </Link>
+                        <Link href="/signup">
+                          <Button className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-signup">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
                     )}
                   </div>
                 </nav>

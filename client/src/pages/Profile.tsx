@@ -1,23 +1,38 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
+import { useAuth } from "@/lib/authContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { LogOut, User } from "lucide-react";
 
 export default function Profile() {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const isAdmin = user?.email?.endsWith("@admin.divine") || user?.email === "admin@example.com";
+  const [, setLocation] = useLocation();
+  const { user, signOut, isAdmin } = useAuth();
+  const { toast } = useToast();
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">Please login to view your profile</p>
+          <Button onClick={() => setLocation("/login")}>Go to Login</Button>
+        </div>
+      </div>
+    );
   }
 
-  if (!isAuthenticated || !user) {
-    window.location.href = "/api/login";
-    return null;
-  }
-
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({ title: "Logged Out" });
+      setLocation("/");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -37,7 +52,7 @@ export default function Profile() {
           <div className="space-y-4 mb-6 p-4 bg-muted rounded-lg">
             <div>
               <p className="text-sm text-muted-foreground">Email Address</p>
-              <p className="font-semibold">{user.email || "N/A"}</p>
+              <p className="font-semibold">{user.email}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Account Type</p>
@@ -47,7 +62,7 @@ export default function Profile() {
 
           <div className="flex gap-2">
             {isAdmin && (
-              <Button onClick={() => window.location.href = "/admin"} variant="default">
+              <Button onClick={() => setLocation("/admin")} variant="default">
                 Go to Admin Dashboard
               </Button>
             )}

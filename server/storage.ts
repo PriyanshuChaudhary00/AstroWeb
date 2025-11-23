@@ -7,8 +7,7 @@ import type {
   Order, InsertOrder,
   Video, InsertVideo,
   CartItem,
-  User,
-  UpsertUser
+  User
 } from "@shared/schema";
 
 export interface IStorage {
@@ -39,9 +38,10 @@ export interface IStorage {
   getAllVideos(): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
 
-  // Users (Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
+  // Users
+  createOrUpdateUser(user: User): Promise<User>;
+  getUserById(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -191,7 +191,7 @@ export class MemStorage implements IStorage {
 
     productData.forEach(product => {
       const id = randomUUID();
-      this.products.set(id, { ...product, id, certified: product.certified ?? true, inStock: product.inStock ?? true, rating: product.rating ?? "4.50", reviewCount: product.reviewCount ?? 0 });
+      this.products.set(id, { ...product, id });
     });
 
     // Seed Blog Posts
@@ -277,7 +277,7 @@ export class MemStorage implements IStorage {
 
     testimonialData.forEach(testimonial => {
       const id = randomUUID();
-      this.testimonials.set(id, { ...testimonial, id, verified: testimonial.verified ?? false });
+      this.testimonials.set(id, { ...testimonial, id });
     });
   }
 
@@ -381,21 +381,18 @@ export class MemStorage implements IStorage {
     return video;
   }
 
-  // Users (Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
+  // Users
+  async createOrUpdateUser(user: User): Promise<User> {
+    this.users.set(user.id, user);
+    return user;
+  }
+
+  async getUserById(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    const id = userData.id || randomUUID();
-    const user: User = {
-      ...userData,
-      id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.set(id, user);
-    return user;
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(u => u.email === email);
   }
 }
 
