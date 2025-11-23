@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Edit2 } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Upload } from "lucide-react";
 import type { Product } from "@shared/schema";
 
 export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: "", category: "", price: "", description: "" });
+  const [formData, setFormData] = useState({ name: "", category: "", price: "", description: "", images: [] as string[] });
 
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -17,6 +17,28 @@ export default function AdminProducts() {
       return response.json();
     }
   });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, base64]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
 
   const handleAddProduct = async () => {
     if (!formData.name || !formData.category || !formData.price) {
@@ -30,13 +52,13 @@ export default function AdminProducts() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          images: ["https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600"],
+          images: formData.images.length > 0 ? formData.images : ["https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600"],
           benefits: ["Benefit 1", "Benefit 2"],
           certified: true,
           inStock: true
         })
       });
-      setFormData({ name: "", category: "", price: "", description: "" });
+      setFormData({ name: "", category: "", price: "", description: "", images: [] });
       setShowForm(false);
     } catch (error) {
       console.error("Error:", error);
@@ -91,11 +113,41 @@ export default function AdminProducts() {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               data-testid="textarea-product-description"
             />
+            <div className="border-2 border-dashed rounded-md p-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Upload className="w-4 h-4" />
+                <span className="text-sm text-muted-foreground">Upload Product Images</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  data-testid="input-product-images"
+                />
+              </label>
+            </div>
+            {formData.images.length > 0 && (
+              <div className="grid grid-cols-2 gap-2">
+                {formData.images.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img src={image} alt={`Product ${index + 1}`} className="w-full h-24 object-cover rounded-md" />
+                    <button
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                      data-testid={`button-remove-image-${index}`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="flex gap-2">
               <Button onClick={handleAddProduct} data-testid="button-save-product">
                 Save Product
               </Button>
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+              <Button variant="outline" onClick={() => { setShowForm(false); setFormData({ name: "", category: "", price: "", description: "", images: [] }); }}>
                 Cancel
               </Button>
             </div>

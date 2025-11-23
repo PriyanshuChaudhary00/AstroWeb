@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Edit2 } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Upload } from "lucide-react";
 import type { BlogPost } from "@shared/schema";
 
 export default function AdminBlog() {
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ title: "", excerpt: "", content: "" });
+  const [formData, setFormData] = useState({ title: "", excerpt: "", content: "", featuredImage: "" });
 
   const { data: posts, isLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
@@ -17,6 +17,21 @@ export default function AdminBlog() {
       return response.json();
     }
   });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        setFormData(prev => ({
+          ...prev,
+          featuredImage: base64
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddPost = async () => {
     if (!formData.title || !formData.excerpt || !formData.content) {
@@ -32,14 +47,14 @@ export default function AdminBlog() {
           ...formData,
           slug: formData.title.toLowerCase().replace(/\s+/g, "-"),
           category: "Astrology",
-          featuredImage: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800",
+          featuredImage: formData.featuredImage || "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800",
           author: "Admin",
           readTime: 5,
           metaDescription: formData.excerpt,
           publishedAt: new Date()
         })
       });
-      setFormData({ title: "", excerpt: "", content: "" });
+      setFormData({ title: "", excerpt: "", content: "", featuredImage: "" });
       setShowForm(false);
     } catch (error) {
       console.error("Error:", error);
@@ -79,11 +94,36 @@ export default function AdminBlog() {
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               data-testid="textarea-blog-content"
             />
+            <div className="border-2 border-dashed rounded-md p-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Upload className="w-4 h-4" />
+                <span className="text-sm text-muted-foreground">Upload Featured Image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  data-testid="input-blog-featured-image"
+                />
+              </label>
+            </div>
+            {formData.featuredImage && (
+              <div className="relative group">
+                <img src={formData.featuredImage} alt="Featured" className="w-full h-40 object-cover rounded-md" />
+                <button
+                  onClick={() => setFormData(prev => ({ ...prev, featuredImage: "" }))}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                  data-testid="button-remove-featured-image"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             <div className="flex gap-2">
               <Button onClick={handleAddPost} data-testid="button-save-blog">
                 Save Post
               </Button>
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+              <Button variant="outline" onClick={() => { setShowForm(false); setFormData({ title: "", excerpt: "", content: "", featuredImage: "" }); }}>
                 Cancel
               </Button>
             </div>
