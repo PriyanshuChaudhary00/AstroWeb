@@ -4,9 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { getAuthToken } from "@/lib/supabase";
 import type { Video } from "@shared/schema";
 
 export default function AdminVideos() {
+  const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: "", youtubeUrl: "" });
 
@@ -33,25 +36,43 @@ export default function AdminVideos() {
   const handleAddVideo = async () => {
     const youtubeId = extractYoutubeId(formData.youtubeUrl);
     if (!youtubeId || !formData.title.trim()) {
-      alert("Please enter a valid YouTube URL and title");
+      toast({ title: "Error", description: "Please enter a valid YouTube URL and title", variant: "destructive" });
       return;
     }
 
     try {
-      await fetch("/api/videos", {
+      const token = await getAuthToken();
+      if (!token) {
+        toast({ title: "Error", description: "You must be logged in to add videos", variant: "destructive" });
+        return;
+      }
+
+      const response = await fetch("/api/videos", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           title: formData.title,
           youtubeUrl: formData.youtubeUrl,
           thumbnailUrl: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
         })
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast({ title: "Error", description: error.error || "Failed to add video", variant: "destructive" });
+        return;
+      }
+
       setFormData({ title: "", youtubeUrl: "" });
       setShowForm(false);
+      toast({ title: "Success", description: "Video added successfully" });
       refetch();
     } catch (error) {
       console.error("Error:", error);
+      toast({ title: "Error", description: "Failed to add video", variant: "destructive" });
     }
   };
 
