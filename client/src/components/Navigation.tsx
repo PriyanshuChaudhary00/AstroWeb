@@ -50,6 +50,12 @@ export function Navigation({ cartItemCount }: NavigationProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
+            <Link href="/about">
+              <Button variant="ghost" size="sm" data-testid="link-about" className={location === "/about" ? "bg-accent/10" : ""}>
+                About Us
+              </Button>
+            </Link>
+
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -74,9 +80,15 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </NavigationMenuList>
             </NavigationMenu>
 
+            <Link href="/book-appointment">
+              <Button variant="ghost" size="sm" data-testid="link-book-appointment" className={location === "/book-appointment" ? "bg-accent/10" : ""}>
+                Book Consultation
+              </Button>
+            </Link>
+
             <Link href="/blog">
               <Button variant="ghost" size="sm" data-testid="link-blog" className={location === "/blog" ? "bg-accent/10" : ""}>
-                Blog
+                Blogs
               </Button>
             </Link>
             
@@ -86,21 +98,9 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
             
-            <Link href="/book-appointment">
-              <Button variant="ghost" size="sm" data-testid="link-book-appointment" className={location === "/book-appointment" ? "bg-accent/10" : ""}>
-                Book Consultation
-              </Button>
-            </Link>
-            
-            <Link href="/about">
-              <Button variant="ghost" size="sm" data-testid="link-about" className={location === "/about" ? "bg-accent/10" : ""}>
-                About
-              </Button>
-            </Link>
-            
             <Link href="/contact">
               <Button variant="ghost" size="sm" data-testid="link-contact" className={location === "/contact" ? "bg-accent/10" : ""}>
-                Contact
+                Contact Us
               </Button>
             </Link>
           </nav>
@@ -162,6 +162,14 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
+                  <div className="space-y-1">
+                    <Link href="/about">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-about">
+                        About Us
+                      </Button>
+                    </Link>
+                  </div>
+
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground px-2">Products</p>
                     {productCategories.map((category) => (
@@ -179,9 +187,14 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                   </div>
 
                   <div className="border-t pt-4 space-y-1">
+                    <Link href="/book-appointment">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-appointment">
+                        Book Consultation
+                      </Button>
+                    </Link>
                     <Link href="/blog">
                       <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-blog">
-                        Blog
+                        Blogs
                       </Button>
                     </Link>
                     <Link href="/videos">
@@ -189,19 +202,9 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                         Videos
                       </Button>
                     </Link>
-                    <Link href="/book-appointment">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-appointment">
-                        Book Consultation
-                      </Button>
-                    </Link>
-                    <Link href="/about">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-about">
-                        About
-                      </Button>
-                    </Link>
                     <Link href="/contact">
                       <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-contact">
-                        Contact
+                        Contact Us
                       </Button>
                     </Link>
                   </div>
