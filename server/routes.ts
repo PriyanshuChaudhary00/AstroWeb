@@ -80,6 +80,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Appointments API
+  app.get("/api/appointments", verifyAuth, requireAdmin, async (req, res) => {
+    try {
+      const appointments = await storage.getAllAppointments();
+      res.json(appointments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+  });
+
   app.post("/api/appointments", async (req, res) => {
     try {
       const validatedData = insertAppointmentSchema.parse(req.body);

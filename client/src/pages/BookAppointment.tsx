@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,11 +8,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Award, CheckCircle2 } from "lucide-react";
+import { Star, Clock, Award, CheckCircle2, Calendar as CalendarIcon, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/authContext";
+import type { Appointment } from "@shared/schema";
+import { getAuthToken } from "@/lib/supabase";
 
 export default function BookAppointment() {
   const { toast } = useToast();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [consultationType, setConsultationType] = useState("Personal");
@@ -24,6 +29,21 @@ export default function BookAppointment() {
 
   const consultationTypes = ["Personal", "Business", "Relationship", "Health"];
 
+  // Fetch appointments for admin
+  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
+    queryKey: ["/api/appointments"],
+    queryFn: async () => {
+      const token = await getAuthToken();
+      if (!token) return [];
+      const response = await fetch("/api/appointments", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: isAdmin && !authLoading
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
@@ -31,6 +51,89 @@ export default function BookAppointment() {
       description: "We'll confirm your booking via email shortly",
     });
   };
+
+  // Admin view - show all bookings
+  if (isAdmin && !authLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="bg-primary text-primary-foreground py-16">
+          <div className="container mx-auto px-4 lg:px-8 text-center">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Consultation Bookings</h1>
+            <p className="text-primary-foreground/90 text-lg max-w-2xl mx-auto">Manage all customer consultation bookings</p>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 lg:px-8 py-12">
+          {appointmentsLoading ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">Loading bookings...</p>
+              </CardContent>
+            </Card>
+          ) : appointments.length === 0 ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">No consultation bookings yet</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {appointments.map((appointment) => (
+                <Card key={appointment.id} className="hover-elevate">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Name</p>
+                        <p className="font-semibold">{appointment.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <p className="font-semibold text-sm">{appointment.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Phone</p>
+                        <p className="font-semibold">{appointment.phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Type</p>
+                        <Badge>{appointment.consultationType}</Badge>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1"><CalendarIcon className="w-4 h-4" />Date</p>
+                        <p className="font-semibold">{appointment.date}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1"><Clock className="w-4 h-4" />Time</p>
+                        <p className="font-semibold">{appointment.time}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Status</p>
+                        <Badge variant={appointment.paymentStatus === "completed" ? "default" : "outline"}>
+                          {appointment.paymentStatus}
+                        </Badge>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Booked</p>
+                        <p className="font-semibold text-sm">
+                          {appointment.createdAt ? new Date(appointment.createdAt).toLocaleDateString() : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                    {appointment.message && (
+                      <div className="mt-4 pt-4 border-t">
+                        <p className="text-sm text-muted-foreground">Message</p>
+                        <p className="text-sm">{appointment.message}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -28,6 +28,7 @@ export interface IStorage {
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
 
   // Appointments
+  getAllAppointments(): Promise<Appointment[]>;
   createAppointment(appointment: InsertAppointment): Promise<Appointment>;
   getAppointmentById(id: string): Promise<Appointment | undefined>;
 
@@ -335,19 +336,51 @@ export class MemStorage implements IStorage {
   }
 
   // Appointments
+  async getAllAppointments(): Promise<Appointment[]> {
+    try {
+      const appointments = await getFromDb("appointments");
+      return appointments || [];
+    } catch (error) {
+      console.error("Error fetching appointments from Supabase:", error);
+      return Array.from(this.appointments.values());
+    }
+  }
+
   async createAppointment(insertAppointment: InsertAppointment): Promise<Appointment> {
-    const id = randomUUID();
-    const appointment: Appointment = {
-      ...insertAppointment,
-      id,
-      createdAt: new Date()
-    };
-    this.appointments.set(id, appointment);
-    return appointment;
+    try {
+      const id = randomUUID();
+      const appointment = {
+        id,
+        ...insertAppointment,
+        created_at: new Date().toISOString()
+      };
+      const result = await insertToDb("appointments", appointment);
+      return result as Appointment;
+    } catch (error) {
+      console.error("Error creating appointment in Supabase:", error);
+      const id = randomUUID();
+      const appointment: Appointment = {
+        ...insertAppointment,
+        id,
+        createdAt: new Date()
+      };
+      this.appointments.set(id, appointment);
+      return appointment;
+    }
   }
 
   async getAppointmentById(id: string): Promise<Appointment | undefined> {
-    return this.appointments.get(id);
+    try {
+      const result = await supabaseDb
+        .from("appointments")
+        .select()
+        .eq("id", id)
+        .single();
+      return result.data || undefined;
+    } catch (error) {
+      console.error("Error fetching appointment by id:", error);
+      return this.appointments.get(id);
+    }
   }
 
   // Orders
