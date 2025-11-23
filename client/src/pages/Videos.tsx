@@ -14,7 +14,7 @@ export default function Videos() {
   const [videoTitle, setVideoTitle] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
 
-  const { data: videos, isLoading, refetch } = useQuery<Video[]>({
+  const { data: videos, isLoading: isVideosLoading, refetch } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
     queryFn: async () => {
       const response = await fetch("/api/videos");
@@ -148,7 +148,7 @@ export default function Videos() {
       {/* Videos Grid */}
       <section className="py-12 md:py-20 px-4">
         <div className="container mx-auto">
-          {isLoading ? (
+          {isVideosLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-muted animate-pulse rounded-lg h-64" />
