@@ -17,6 +17,7 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Horoscope from "@/pages/Horoscope";
 import HoroscopeDetail from "@/pages/HoroscopeDetail";
+import Videos from "@/pages/Videos";
 import PolicyPage from "@/pages/PolicyPage";
 import NotFound from "@/pages/not-found";
 
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/cart" component={Cart} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={BlogPost} />
+          <Route path="/videos" component={Videos} />
           <Route path="/book-appointment" component={BookAppointment} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />

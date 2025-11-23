@@ -74,9 +74,9 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
             
-            <Link href="/horoscope">
-              <Button variant="ghost" size="sm" data-testid="link-horoscope" className={location === "/horoscope" ? "bg-accent/10" : ""}>
-                Horoscope
+            <Link href="/videos">
+              <Button variant="ghost" size="sm" data-testid="link-videos" className={location === "/videos" ? "bg-accent/10" : ""}>
+                Videos
               </Button>
             </Link>
             
@@ -147,9 +147,9 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                         Blog
                       </Button>
                     </Link>
-                    <Link href="/horoscope">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-horoscope">
-                        Horoscope
+                    <Link href="/videos">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-videos">
+                        Videos
                       </Button>
                     </Link>
                     <Link href="/book-appointment">

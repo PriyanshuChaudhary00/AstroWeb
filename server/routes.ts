@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertAppointmentSchema, insertOrderSchema, contactFormSchema } from "@shared/schema";
+import { insertAppointmentSchema, insertOrderSchema, contactFormSchema, insertVideoSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -173,6 +173,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json({ message: "Subscribed successfully" });
     } catch (error) {
       res.status(500).json({ error: "Failed to subscribe" });
+    }
+  });
+
+  // Videos API
+  app.get("/api/videos", async (req, res) => {
+    try {
+      const videos = await storage.getAllVideos();
+      res.json(videos);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch videos" });
+    }
+  });
+
+  app.post("/api/videos", async (req, res) => {
+    try {
+      const validatedData = insertVideoSchema.parse(req.body);
+      const video = await storage.createVideo(validatedData);
+      res.status(201).json(video);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create video" });
     }
   });
 

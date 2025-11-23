@@ -5,6 +5,7 @@ import type {
   Appointment, InsertAppointment,
   Testimonial, InsertTestimonial,
   Order, InsertOrder,
+  Video, InsertVideo,
   CartItem
 } from "@shared/schema";
 
@@ -31,6 +32,10 @@ export interface IStorage {
   // Orders
   createOrder(order: InsertOrder): Promise<Order>;
   getOrderById(id: string): Promise<Order | undefined>;
+
+  // Videos
+  getAllVideos(): Promise<Video[]>;
+  createVideo(video: InsertVideo): Promise<Video>;
 }
 
 export class MemStorage implements IStorage {
@@ -39,6 +44,7 @@ export class MemStorage implements IStorage {
   private testimonials: Map<string, Testimonial>;
   private appointments: Map<string, Appointment>;
   private orders: Map<string, Order>;
+  private videos: Map<string, Video>;
 
   constructor() {
     this.products = new Map();
@@ -46,6 +52,7 @@ export class MemStorage implements IStorage {
     this.testimonials = new Map();
     this.appointments = new Map();
     this.orders = new Map();
+    this.videos = new Map();
     this.seedData();
   }
 
@@ -348,6 +355,22 @@ export class MemStorage implements IStorage {
 
   async getOrderById(id: string): Promise<Order | undefined> {
     return this.orders.get(id);
+  }
+
+  // Videos
+  async getAllVideos(): Promise<Video[]> {
+    return Array.from(this.videos.values());
+  }
+
+  async createVideo(insertVideo: InsertVideo): Promise<Video> {
+    const id = randomUUID();
+    const video: Video = {
+      ...insertVideo,
+      id,
+      createdAt: new Date()
+    };
+    this.videos.set(id, video);
+    return video;
   }
 }
 

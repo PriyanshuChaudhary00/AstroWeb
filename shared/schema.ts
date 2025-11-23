@@ -120,6 +120,23 @@ export const contactFormSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
+// Videos Schema
+export const videos = pgTable("videos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  youtubeUrl: text("youtube_url").notNull(),
+  thumbnailUrl: text("thumbnail_url").notNull(),
+  createdAt: timestamp("created_at").default(sql`now()`),
+});
+
+export const insertVideoSchema = createInsertSchema(videos).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Video = typeof videos.$inferSelect;
+export type InsertVideo = z.infer<typeof insertVideoSchema>;
+
 // Order Schema
 export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
