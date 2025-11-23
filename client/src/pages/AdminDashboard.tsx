@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Package, ShoppingCart, FileText, Calendar, Video } from "lucide-react";
-import { signOut } from "@/lib/supabase";
+import { useAuth } from "@/lib/authContext";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminBlog from "@/pages/admin/AdminBlog";
@@ -14,14 +14,23 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("products");
   const { toast } = useToast();
+  const { signOut } = useAuth();
 
   const handleLogout = async () => {
-    await signOut();
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully"
-    });
-    setLocation("/admin-login");
+    try {
+      await signOut();
+      toast({
+        title: "Logged Out",
+        description: "You have been logged out successfully"
+      });
+      setLocation("/");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
   const tabs = [

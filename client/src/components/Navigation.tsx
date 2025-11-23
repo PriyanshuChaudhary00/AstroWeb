@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Menu, X, Sparkles, Phone, User } from "lucide-react";
+import { ShoppingCart, Menu, X, Sparkles, Phone, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/lib/authContext";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -20,6 +21,7 @@ interface NavigationProps {
 export function Navigation({ cartItemCount }: NavigationProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
 
   const productCategories = [
     { name: "Gemstones", href: "/products/gemstones", description: "Certified natural gemstones" },
@@ -116,6 +118,37 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
 
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Link href="/profile">
+                  <Button variant="ghost" size="icon" data-testid="button-profile">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => signOut()}
+                  data-testid="button-logout"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="outline" size="sm" data-testid="button-login">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" data-testid="button-signup">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
+
             {/* Mobile Menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild className="lg:hidden">
@@ -167,6 +200,51 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                         Contact
                       </Button>
                     </Link>
+                  </div>
+
+                  <div className="border-t pt-4 space-y-2">
+                    {user ? (
+                      <>
+                        <Link href="/profile">
+                          <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-profile">
+                            <User className="w-4 h-4 mr-2" />
+                            Profile
+                          </Button>
+                        </Link>
+                        {isAdmin && (
+                          <Link href="/admin">
+                            <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-admin">
+                              Admin Dashboard
+                            </Button>
+                          </Link>
+                        )}
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start"
+                          onClick={() => {
+                            signOut();
+                            setMobileMenuOpen(false);
+                          }}
+                          data-testid="button-mobile-logout"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/login">
+                          <Button variant="outline" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-login">
+                            Login
+                          </Button>
+                        </Link>
+                        <Link href="/signup">
+                          <Button className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-signup">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </nav>
               </SheetContent>

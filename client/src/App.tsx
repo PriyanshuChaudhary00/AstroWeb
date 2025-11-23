@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/lib/authContext";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import Home from "@/pages/Home";
@@ -18,10 +19,20 @@ import Contact from "@/pages/Contact";
 import Horoscope from "@/pages/Horoscope";
 import HoroscopeDetail from "@/pages/HoroscopeDetail";
 import Videos from "@/pages/Videos";
-import AdminLogin from "@/pages/AdminLogin";
+import SignUp from "@/pages/SignUp";
+import Login from "@/pages/Login";
+import Profile from "@/pages/Profile";
 import AdminDashboard from "@/pages/AdminDashboard";
 import PolicyPage from "@/pages/PolicyPage";
 import NotFound from "@/pages/not-found";
+
+function ProtectedAdminRoute({ component: Component }: { component: any }) {
+  const { user, isAdmin, loading } = useAuth();
+
+  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (!user || !isAdmin) return <NotFound />;
+  return <Component />;
+}
 
 function Router() {
   const [cartItemCount] = useState(0);
@@ -44,8 +55,10 @@ function Router() {
           <Route path="/contact" component={Contact} />
           <Route path="/horoscope" component={Horoscope} />
           <Route path="/horoscope/:sign" component={HoroscopeDetail} />
-          <Route path="/admin-login" component={AdminLogin} />
-          <Route path="/admin" component={AdminDashboard} />
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/admin" component={() => <ProtectedAdminRoute component={AdminDashboard} />} />
           <Route path="/privacy-policy" component={() => <PolicyPage />} />
           <Route path="/terms" component={() => <PolicyPage />} />
           <Route path="/refund-policy" component={() => <PolicyPage />} />
@@ -61,10 +74,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
