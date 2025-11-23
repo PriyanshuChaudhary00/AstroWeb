@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Play, ExternalLink } from "lucide-react";
-import { useAuth } from "@/lib/authContext";
+import { useAuth } from "@/hooks/useAuth";
 import type { Video } from "@shared/schema";
 
 export default function Videos() {
-  const { user, isAdmin } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
+  const isAdmin = user?.email?.endsWith("@admin.divine") || user?.email === "admin@example.com";
   const [showAddForm, setShowAddForm] = useState(false);
   const [videoTitle, setVideoTitle] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -83,7 +84,7 @@ export default function Videos() {
           </div>
 
           {/* Add Video Form - Only for Admins */}
-          {user && isAdmin && (
+          {isAuthenticated && isAdmin && (
             <div className="max-w-2xl mx-auto mb-8">
               {!showAddForm ? (
                 <Button 
