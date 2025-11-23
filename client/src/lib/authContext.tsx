@@ -6,6 +6,7 @@ interface AuthUser {
   id: string;
   email: string;
   isAdmin: boolean;
+  accountType: "admin" | "customer";
 }
 
 interface AuthContextType {
@@ -39,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         if (supabaseUser?.email) {
           const adminStatus = isAdminUser(supabaseUser.email);
+          const accountType = adminStatus ? "admin" : "customer";
           
           // Try to save/update user in our users table
           try {
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 id: supabaseUser.id,
                 email: supabaseUser.email,
                 isAdmin: adminStatus,
+                accountType: accountType,
                 fullName: supabaseUser.user_metadata?.full_name || ""
               })
             });
@@ -59,7 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser({
             id: supabaseUser.id,
             email: supabaseUser.email,
-            isAdmin: adminStatus
+            isAdmin: adminStatus,
+            accountType: accountType
           });
         } else {
           setUser(null);
@@ -77,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user?.email) {
         const adminStatus = isAdminUser(session.user.email);
+        const accountType = adminStatus ? "admin" : "customer";
         
         // Try to save/update user in our users table
         try {
@@ -87,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               id: session.user.id,
               email: session.user.email,
               isAdmin: adminStatus,
+              accountType: accountType,
               fullName: session.user.user_metadata?.full_name || ""
             })
           });
@@ -97,7 +103,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser({
           id: session.user.id,
           email: session.user.email,
-          isAdmin: adminStatus
+          isAdmin: adminStatus,
+          accountType: accountType
         });
       } else {
         setUser(null);
@@ -124,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Save user to our database
       if (data.user) {
         const adminStatus = isAdminUser(email);
+        const accountType = adminStatus ? "admin" : "customer";
         await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -131,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             id: data.user.id,
             email: email,
             isAdmin: adminStatus,
+            accountType: accountType,
             fullName: ""
           })
         }).catch(err => console.log("User profile save failed:", err));
@@ -152,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Update user in our database
       if (data.user) {
         const adminStatus = isAdminUser(email);
+        const accountType = adminStatus ? "admin" : "customer";
         await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -159,6 +169,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             id: data.user.id,
             email: email,
             isAdmin: adminStatus,
+            accountType: accountType,
             fullName: data.user.user_metadata?.full_name || ""
           })
         }).catch(err => console.log("User profile update failed:", err));

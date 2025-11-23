@@ -166,6 +166,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   fullName: text("full_name"),
   isAdmin: boolean("is_admin").default(false),
+  accountType: text("account_type").default("customer"), // 'admin' or 'customer'
   createdAt: timestamp("created_at").default(sql`now()`),
   updatedAt: timestamp("updated_at").default(sql`now()`),
 });

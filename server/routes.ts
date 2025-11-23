@@ -258,7 +258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Users API
   app.post("/api/users", async (req, res) => {
     try {
-      const { id, email, isAdmin, fullName } = req.body;
+      const { id, email, isAdmin, accountType, fullName } = req.body;
 
       if (!id || !email) {
         return res.status(400).json({ error: "Missing required fields: id and email" });
@@ -268,6 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id,
         email,
         isAdmin: isAdmin || false,
+        accountType: accountType || "customer",
         fullName: fullName || undefined,
         createdAt: new Date(),
         updatedAt: new Date()
