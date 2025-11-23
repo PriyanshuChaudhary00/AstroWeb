@@ -5,6 +5,16 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "your-anon-key
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export async function getAuthToken() {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token || null;
+  } catch (error) {
+    console.error("Error getting auth token:", error);
+    return null;
+  }
+}
+
 export async function signUp(email: string, password: string) {
   return await supabase.auth.signUp({ email, password });
 }

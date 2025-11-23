@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertAppointmentSchema, insertOrderSchema, contactFormSchema, insertVideoSchema, type User } from "@shared/schema";
 import { z } from "zod";
+import { verifyAuth, requireAdmin, type AuthRequest } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Products API
@@ -176,6 +177,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Product creation endpoint - Admin only
+  app.post("/api/products", verifyAuth, requireAdmin, async (req: AuthRequest, res) => {
+    try {
+      const productData = req.body;
+      const product = await storage.createProduct(productData);
+      res.status(201).json(product);
+    } catch (error) {
+      console.error("Product creation error:", error);
+      res.status(500).json({ error: "Failed to create product" });
+    }
+  });
+
   // Admin APIs
   app.get("/api/orders", async (req, res) => {
     try {
@@ -207,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/videos", async (req, res) => {
+  app.post("/api/videos", verifyAuth, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const validatedData = insertVideoSchema.parse(req.body);
       const video = await storage.createVideo(validatedData);
@@ -217,6 +230,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: error.errors });
       }
       res.status(500).json({ error: "Failed to create video" });
+    }
+  });
+
+  // Blog API - Admin only for creation
+  app.post("/api/blog", verifyAuth, requireAdmin, async (req: AuthRequest, res) => {
+    try {
+      const blogData = req.body;
+      const post = await storage.createBlogPost(blogData);
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Blog creation error:", error);
+      res.status(500).json({ error: "Failed to create blog post" });
     }
   });
 

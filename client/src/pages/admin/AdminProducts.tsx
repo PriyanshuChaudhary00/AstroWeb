@@ -3,12 +3,16 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Edit2, X, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Trash2, Edit2, X, Upload, AlertCircle } from "lucide-react";
+import { getAuthToken } from "@/lib/supabase";
 import type { Product } from "@shared/schema";
 
 export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", category: "", price: "", description: "", images: [] as string[] });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -42,14 +46,32 @@ export default function AdminProducts() {
 
   const handleAddProduct = async () => {
     if (!formData.name || !formData.category || !formData.price) {
-      alert("Please fill in all required fields");
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      await fetch("/api/products", {
+      const token = await getAuthToken();
+      if (!token) {
+        toast({
+          title: "Error",
+          description: "You must be logged in as admin to add products",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const response = await fetch("/api/products", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           ...formData,
           images: formData.images.length > 0 ? formData.images : ["https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600"],
@@ -58,10 +80,26 @@ export default function AdminProducts() {
           inStock: true
         })
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to add product");
+      }
+
+      toast({
+        title: "Success",
+        description: "Product added successfully"
+      });
       setFormData({ name: "", category: "", price: "", description: "", images: [] });
       setShowForm(false);
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add product",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
