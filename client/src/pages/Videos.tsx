@@ -4,13 +4,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Play, ExternalLink } from "lucide-react";
+import { useAuth } from "@/lib/authContext";
 import type { Video } from "@shared/schema";
 
 export default function Videos() {
+  const { user, isAdmin } = useAuth();
   const [showAddForm, setShowAddForm] = useState(false);
   const [videoTitle, setVideoTitle] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const { data: videos, isLoading, refetch } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
@@ -81,19 +82,8 @@ export default function Videos() {
             </p>
           </div>
 
-          {/* Admin Panel */}
-          <div className="flex justify-center gap-2 mb-8">
-            <Button 
-              variant={isAdmin ? "default" : "outline"}
-              onClick={() => setIsAdmin(!isAdmin)}
-              data-testid="button-toggle-admin"
-            >
-              {isAdmin ? "Admin Mode: ON" : "Admin Mode: OFF"}
-            </Button>
-          </div>
-
-          {/* Add Video Form */}
-          {isAdmin && (
+          {/* Add Video Form - Only for Admins */}
+          {user && isAdmin && (
             <div className="max-w-2xl mx-auto mb-8">
               {!showAddForm ? (
                 <Button 
@@ -210,7 +200,7 @@ export default function Videos() {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg" data-testid="text-no-videos">
-                No videos yet. {isAdmin && "Click 'Add New Video' to upload content!"}
+                No videos yet.
               </p>
             </div>
           )}
