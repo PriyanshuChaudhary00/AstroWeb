@@ -191,7 +191,7 @@ export class MemStorage implements IStorage {
 
     productData.forEach(product => {
       const id = randomUUID();
-      this.products.set(id, { ...product, id });
+      this.products.set(id, { ...product, id, certified: product.certified ?? true, inStock: product.inStock ?? true, rating: product.rating ?? "4.50", reviewCount: product.reviewCount ?? 0 });
     });
 
     // Seed Blog Posts
@@ -277,7 +277,7 @@ export class MemStorage implements IStorage {
 
     testimonialData.forEach(testimonial => {
       const id = randomUUID();
-      this.testimonials.set(id, { ...testimonial, id });
+      this.testimonials.set(id, { ...testimonial, id, verified: testimonial.verified ?? false });
     });
   }
 
