@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { mockAuth, type MockUser } from "./mockAuth";
+import { supabase } from "./supabase";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface AuthUser {
   id: string;
   email: string;
+  isAdmin: boolean;
 }
 
 interface AuthContextType {
@@ -17,6 +19,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Admin email domains
+const ADMIN_EMAILS = ["admin@example.com"];
+const ADMIN_DOMAINS = ["@admin.divine"];
+
+const isAdminUser = (email: string | undefined) => {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email) || ADMIN_DOMAINS.some(domain => email.endsWith(domain));
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,12 +35,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Try to get current user from mock auth (localStorage)
-        const currentUser = await mockAuth.getCurrentUser();
-        if (currentUser) {
+        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+        
+        if (supabaseUser?.email) {
+          const adminStatus = isAdminUser(supabaseUser.email);
+          
+          // Try to save/update user in our users table
+          try {
+            await fetch("/api/users", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: supabaseUser.id,
+                email: supabaseUser.email,
+                isAdmin: adminStatus,
+                fullName: supabaseUser.user_metadata?.full_name || ""
+              })
+            });
+          } catch (err) {
+            console.log("User profile sync failed (backend may not be ready):", err);
+          }
+
           setUser({
-            id: currentUser.id,
-            email: currentUser.email
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+            isAdmin: adminStatus
           });
         } else {
           setUser(null);
@@ -44,21 +74,67 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     checkAuth();
 
-    // Listen for storage changes
-    const handleStorageChange = () => {
-      checkAuth();
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user?.email) {
+        const adminStatus = isAdminUser(session.user.email);
+        
+        // Try to save/update user in our users table
+        try {
+          await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: session.user.id,
+              email: session.user.email,
+              isAdmin: adminStatus,
+              fullName: session.user.user_metadata?.full_name || ""
+            })
+          });
+        } catch (err) {
+          console.log("User profile sync failed:", err);
+        }
+
+        setUser({
+          id: session.user.id,
+          email: session.user.email,
+          isAdmin: adminStatus
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string) => {
     try {
-      const newUser = await mockAuth.signUp(email, password);
-      setUser({
-        id: newUser.id,
-        email: newUser.email
+      const { error, data } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            email: email
+          }
+        }
       });
+      
+      if (error) throw error;
+      
+      // Save user to our database
+      if (data.user) {
+        const adminStatus = isAdminUser(email);
+        await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: data.user.id,
+            email: email,
+            isAdmin: adminStatus,
+            fullName: ""
+          })
+        }).catch(err => console.log("User profile save failed:", err));
+      }
     } catch (error: any) {
       throw error;
     }
@@ -66,11 +142,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const authenticatedUser = await mockAuth.signIn(email, password);
-      setUser({
-        id: authenticatedUser.id,
-        email: authenticatedUser.email
+      const { error, data } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
       });
+      
+      if (error) throw error;
+
+      // Update user in our database
+      if (data.user) {
+        const adminStatus = isAdminUser(email);
+        await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: data.user.id,
+            email: email,
+            isAdmin: adminStatus,
+            fullName: data.user.user_metadata?.full_name || ""
+          })
+        }).catch(err => console.log("User profile update failed:", err));
+      }
     } catch (error: any) {
       throw error;
     }
@@ -78,17 +170,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      await mockAuth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       setUser(null);
     } catch (error: any) {
       throw error;
     }
   };
 
-  const isAdmin = user?.email === "admin@example.com" || user?.email?.endsWith("@admin.divine");
-
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin: user?.isAdmin || false, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

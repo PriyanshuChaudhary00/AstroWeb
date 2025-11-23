@@ -160,6 +160,18 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 
+// Users Schema (for storing user profiles and admin status)
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  fullName: text("full_name"),
+  isAdmin: boolean("is_admin").default(false),
+  createdAt: timestamp("created_at").default(sql`now()`),
+  updatedAt: timestamp("updated_at").default(sql`now()`),
+});
+
+export type User = typeof users.$inferSelect;
+
 // Zodiac Signs
 export interface ZodiacSign {
   name: string;
