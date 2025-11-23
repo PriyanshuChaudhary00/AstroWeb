@@ -160,16 +160,28 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 
-// Users Schema (for storing user profiles and admin status)
+// Replit Auth - Sessions table (REQUIRED FOR REPLIT AUTH)
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  }
+);
+
+// Replit Auth - Users table (REQUIRED FOR REPLIT AUTH)
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  fullName: text("full_name"),
-  isAdmin: boolean("is_admin").default(false),
-  createdAt: timestamp("created_at").default(sql`now()`),
-  updatedAt: timestamp("updated_at").default(sql`now()`),
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
 // Zodiac Signs

@@ -7,7 +7,8 @@ import type {
   Order, InsertOrder,
   Video, InsertVideo,
   CartItem,
-  User
+  User,
+  UpsertUser
 } from "@shared/schema";
 
 export interface IStorage {
@@ -38,10 +39,9 @@ export interface IStorage {
   getAllVideos(): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
 
-  // Users
-  createOrUpdateUser(user: User): Promise<User>;
-  getUserById(id: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
+  // Users (Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
 }
 
 export class MemStorage implements IStorage {
@@ -381,18 +381,21 @@ export class MemStorage implements IStorage {
     return video;
   }
 
-  // Users
-  async createOrUpdateUser(user: User): Promise<User> {
-    this.users.set(user.id, user);
-    return user;
-  }
-
-  async getUserById(id: string): Promise<User | undefined> {
+  // Users (Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(u => u.email === email);
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const id = userData.id || randomUUID();
+    const user: User = {
+      ...userData,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(id, user);
+    return user;
   }
 }
 
