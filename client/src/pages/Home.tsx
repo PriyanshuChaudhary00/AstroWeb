@@ -106,7 +106,7 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/products/gemstones">
+            <Link href="/products">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 min-w-[200px]" data-testid="button-hero-shop">
                 Explore Products
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -190,7 +190,7 @@ export default function Home() {
           <ProductGrid category="featured" limit={6} />
 
           <div className="text-center mt-12">
-            <Link href="/products/gemstones">
+            <Link href="/products">
               <Button size="lg" variant="outline" data-testid="button-view-all">
                 View All Products
                 <ArrowRight className="ml-2 h-4 w-4" />

@@ -22,16 +22,19 @@ export default function Products() {
     remedies: "Traditional spiritual remedies and products for specific planetary afflictions"
   };
 
+  const title = category ? (categoryTitles[category] || "All Products") : "All Products";
+  const description = category ? (categoryDescriptions[category] || "Browse our collection of authentic spiritual products") : "Explore our complete collection of authentic spiritual products and gemstones carefully curated for your well-being";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4" data-testid="text-category-title">
-            {categoryTitles[category || "gemstones"] || "All Products"}
+            {title}
           </h1>
           <p className="text-primary-foreground/90 text-lg max-w-2xl mx-auto" data-testid="text-category-description">
-            {categoryDescriptions[category || "gemstones"] || "Browse our collection of authentic spiritual products"}
+            {description}
           </p>
         </div>
       </div>
