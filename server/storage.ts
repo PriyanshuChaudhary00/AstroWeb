@@ -9,6 +9,7 @@ import type {
   CartItem,
   User
 } from "@shared/schema";
+import { supabaseDb, insertToDb, getFromDb } from "./supabase";
 
 export interface IStorage {
   // Products
@@ -367,18 +368,36 @@ export class MemStorage implements IStorage {
 
   // Videos
   async getAllVideos(): Promise<Video[]> {
-    return Array.from(this.videos.values());
+    try {
+      const videos = await getFromDb("videos");
+      return videos || [];
+    } catch (error) {
+      console.error("Error fetching videos from Supabase:", error);
+      return Array.from(this.videos.values());
+    }
   }
 
   async createVideo(insertVideo: InsertVideo): Promise<Video> {
-    const id = randomUUID();
-    const video: Video = {
-      ...insertVideo,
-      id,
-      createdAt: new Date()
-    };
-    this.videos.set(id, video);
-    return video;
+    try {
+      const id = randomUUID();
+      const video = {
+        id,
+        ...insertVideo,
+        created_at: new Date().toISOString()
+      };
+      const result = await insertToDb("videos", video);
+      return result as Video;
+    } catch (error) {
+      console.error("Error creating video in Supabase:", error);
+      const id = randomUUID();
+      const video: Video = {
+        ...insertVideo,
+        id,
+        createdAt: new Date()
+      };
+      this.videos.set(id, video);
+      return video;
+    }
   }
 
   // Users
