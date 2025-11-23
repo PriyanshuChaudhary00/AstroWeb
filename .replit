@@ -15,7 +15,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 39731
+localPort = 39335
 externalPort = 3000
 
 [env]
@@ -45,7 +45,7 @@ waitForPort = 5000
 [userenv]
 
 [userenv.shared]
-VITE_SUPABASE_URL = "https://your-project.supabase.co"
-VITE_SUPABASE_ANON_KEY = "your-anon-key"
+VITE_SUPABASE_URL = "https://nsaoquxmxmpisfsrpwid.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zYW9xdXhteG1waXNmc3Jwd2lkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MDAwODMsImV4cCI6MjA3OTE3NjA4M30.fu3ygXiVlEom0gbbJfKtWA7NzJx3TUsCPUR68qaDpv4"
 RAZORPAY_KEY_ID = "rzp_test_xxxxxxxxxxxx"
 RAZORPAY_KEY_SECRET = "your-secret-key"

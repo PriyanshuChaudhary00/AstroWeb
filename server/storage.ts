@@ -6,7 +6,8 @@ import type {
   Testimonial, InsertTestimonial,
   Order, InsertOrder,
   Video, InsertVideo,
-  CartItem
+  CartItem,
+  User
 } from "@shared/schema";
 
 export interface IStorage {
@@ -36,6 +37,11 @@ export interface IStorage {
   // Videos
   getAllVideos(): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
+
+  // Users
+  createOrUpdateUser(user: User): Promise<User>;
+  getUserById(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -45,6 +51,7 @@ export class MemStorage implements IStorage {
   private appointments: Map<string, Appointment>;
   private orders: Map<string, Order>;
   private videos: Map<string, Video>;
+  private users: Map<string, User>;
 
   constructor() {
     this.products = new Map();
@@ -53,6 +60,7 @@ export class MemStorage implements IStorage {
     this.appointments = new Map();
     this.orders = new Map();
     this.videos = new Map();
+    this.users = new Map();
     this.seedData();
   }
 
@@ -371,6 +379,20 @@ export class MemStorage implements IStorage {
     };
     this.videos.set(id, video);
     return video;
+  }
+
+  // Users
+  async createOrUpdateUser(user: User): Promise<User> {
+    this.users.set(user.id, user);
+    return user;
+  }
+
+  async getUserById(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(u => u.email === email);
   }
 }
 

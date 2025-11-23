@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertAppointmentSchema, insertOrderSchema, contactFormSchema, insertVideoSchema } from "@shared/schema";
+import { insertAppointmentSchema, insertOrderSchema, contactFormSchema, insertVideoSchema, type User } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -252,6 +252,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to verify payment" });
+    }
+  });
+
+  // Users API
+  app.post("/api/users", async (req, res) => {
+    try {
+      const { id, email, isAdmin, fullName } = req.body;
+
+      if (!id || !email) {
+        return res.status(400).json({ error: "Missing required fields: id and email" });
+      }
+
+      const user: User = {
+        id,
+        email,
+        isAdmin: isAdmin || false,
+        fullName: fullName || undefined,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const savedUser = await storage.createOrUpdateUser(user);
+      res.json(savedUser);
+    } catch (error) {
+      console.error("User save error:", error);
+      res.status(500).json({ error: "Failed to save user" });
+    }
+  });
+
+  app.get("/api/users/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await storage.getUserById(id);
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch user" });
     }
   });
 
