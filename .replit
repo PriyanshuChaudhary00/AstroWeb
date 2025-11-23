@@ -41,3 +41,11 @@ author = "agent"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://your-project.supabase.co"
+VITE_SUPABASE_ANON_KEY = "your-anon-key"
+RAZORPAY_KEY_ID = "rzp_test_xxxxxxxxxxxx"
+RAZORPAY_KEY_SECRET = "your-secret-key"

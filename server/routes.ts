@@ -176,6 +176,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin APIs
+  app.get("/api/orders", async (req, res) => {
+    try {
+      const orders: any[] = [];
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  app.get("/api/appointments", async (req, res) => {
+    try {
+      const appointments = await Promise.all(
+        Array.from(new Map(storage["appointments"]).values() || [])
+      );
+      res.json(appointments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+  });
+
   // Videos API
   app.get("/api/videos", async (req, res) => {
     try {

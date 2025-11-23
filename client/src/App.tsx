@@ -18,6 +18,8 @@ import Contact from "@/pages/Contact";
 import Horoscope from "@/pages/Horoscope";
 import HoroscopeDetail from "@/pages/HoroscopeDetail";
 import Videos from "@/pages/Videos";
+import AdminLogin from "@/pages/AdminLogin";
+import AdminDashboard from "@/pages/AdminDashboard";
 import PolicyPage from "@/pages/PolicyPage";
 import NotFound from "@/pages/not-found";
 
@@ -42,6 +44,8 @@ function Router() {
           <Route path="/contact" component={Contact} />
           <Route path="/horoscope" component={Horoscope} />
           <Route path="/horoscope/:sign" component={HoroscopeDetail} />
+          <Route path="/admin-login" component={AdminLogin} />
+          <Route path="/admin" component={AdminDashboard} />
           <Route path="/privacy-policy" component={() => <PolicyPage />} />
           <Route path="/terms" component={() => <PolicyPage />} />
           <Route path="/refund-policy" component={() => <PolicyPage />} />
