@@ -21,7 +21,11 @@ interface NavigationProps {
 export function Navigation({ cartItemCount }: NavigationProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, loading } = useAuth();
+
+  if (loading) {
+    return <header className="sticky top-0 z-50 w-full border-b bg-card/95 h-16" />;
+  }
 
   const productCategories = [
     { name: "Gemstones", href: "/products/gemstones", description: "Certified natural gemstones" },

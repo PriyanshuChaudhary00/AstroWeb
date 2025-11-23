@@ -35,7 +35,7 @@ function ProtectedAdminRoute({ component: Component }: { component: any }) {
   return <Component />;
 }
 
-function Router() {
+function RouterContent() {
   const [cartItemCount] = useState(0);
 
   return (
@@ -71,6 +71,23 @@ function Router() {
       <Footer />
     </div>
   );
+}
+
+function Router() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <RouterContent />;
 }
 
 function App() {
