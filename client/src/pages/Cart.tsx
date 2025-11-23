@@ -1,12 +1,18 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
+import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, Package, User, Mail, MapPin, DollarSign } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/authContext";
+import { getAuthToken } from "@/lib/supabase";
+import type { Order } from "@shared/schema";
 
 export default function Cart() {
+  const { isAdmin, loading: authLoading } = useAuth();
   const [cartItems, setCartItems] = useState([
     {
       id: "1",
@@ -24,6 +30,138 @@ export default function Cart() {
     }
   ]);
 
+  // Fetch orders for admin
+  const { data: orders = [], isLoading: ordersLoading } = useQuery<Order[]>({
+    queryKey: ["/api/orders"],
+    queryFn: async () => {
+      const token = await getAuthToken();
+      if (!token) return [];
+      const response = await fetch("/api/orders", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: isAdmin && !authLoading
+  });
+
+  // Admin view - show all orders
+  if (isAdmin && !authLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 lg:px-8 py-12">
+          <h1 className="font-serif text-3xl md:text-4xl font-bold mb-8" data-testid="text-orders-title">
+            All Customer Orders
+          </h1>
+
+          {ordersLoading ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">Loading orders...</p>
+              </CardContent>
+            </Card>
+          ) : orders.length === 0 ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No orders yet</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {orders.map((order) => {
+                let itemsList = [];
+                try {
+                  itemsList = JSON.parse(order.items);
+                } catch {
+                  itemsList = [];
+                }
+
+                return (
+                  <Card key={order.id} className="hover-elevate">
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Customer Info */}
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2"><User className="w-4 h-4" />Customer Name</p>
+                            <p className="font-semibold">{order.customerName}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2"><Mail className="w-4 h-4" />Email</p>
+                            <p className="font-semibold text-sm">{order.customerEmail}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Phone</p>
+                            <p className="font-semibold">{order.customerPhone}</p>
+                          </div>
+                        </div>
+
+                        {/* Order Details */}
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2"><Package className="w-4 h-4" />Order ID</p>
+                            <p className="font-semibold text-xs">{order.id}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Items Count</p>
+                            <p className="font-semibold">{itemsList.length} item(s)</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Order Date</p>
+                            <p className="font-semibold text-sm">
+                              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Payment & Amount */}
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2"><DollarSign className="w-4 h-4" />Total Amount</p>
+                            <p className="font-bold text-lg text-accent">₹{parseFloat(order.totalAmount).toLocaleString("en-IN")}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Payment Status</p>
+                            <Badge variant={order.paymentStatus === "completed" ? "default" : "outline"}>
+                              {order.paymentStatus}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Shipping Address */}
+                      <div className="mt-4 pt-4 border-t">
+                        <p className="text-sm text-muted-foreground flex items-center gap-2 mb-2"><MapPin className="w-4 h-4" />Shipping Address</p>
+                        <p className="text-sm">{order.shippingAddress}</p>
+                      </div>
+
+                      {/* Items List */}
+                      {itemsList.length > 0 && (
+                        <div className="mt-4 pt-4 border-t">
+                          <p className="text-sm font-semibold mb-2">Items Ordered:</p>
+                          <div className="text-sm space-y-1">
+                            {itemsList.map((item: any, idx: number) => (
+                              <div key={idx} className="flex justify-between text-muted-foreground">
+                                <span>{item.name || item.productId}</span>
+                                <span>x{item.quantity}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Regular customer view - shopping cart
   const updateQuantity = (id: string, delta: number) => {
     setCartItems(items =>
       items.map(item =>

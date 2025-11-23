@@ -33,6 +33,7 @@ export interface IStorage {
   getAppointmentById(id: string): Promise<Appointment | undefined>;
 
   // Orders
+  getAllOrders(): Promise<Order[]>;
   createOrder(order: InsertOrder): Promise<Order>;
   getOrderById(id: string): Promise<Order | undefined>;
 
@@ -384,19 +385,51 @@ export class MemStorage implements IStorage {
   }
 
   // Orders
+  async getAllOrders(): Promise<Order[]> {
+    try {
+      const orders = await getFromDb("orders");
+      return orders || [];
+    } catch (error) {
+      console.error("Error fetching orders from Supabase:", error);
+      return Array.from(this.orders.values());
+    }
+  }
+
   async createOrder(insertOrder: InsertOrder): Promise<Order> {
-    const id = randomUUID();
-    const order: Order = {
-      ...insertOrder,
-      id,
-      createdAt: new Date()
-    };
-    this.orders.set(id, order);
-    return order;
+    try {
+      const id = randomUUID();
+      const order = {
+        id,
+        ...insertOrder,
+        created_at: new Date().toISOString()
+      };
+      const result = await insertToDb("orders", order);
+      return result as Order;
+    } catch (error) {
+      console.error("Error creating order in Supabase:", error);
+      const id = randomUUID();
+      const order: Order = {
+        ...insertOrder,
+        id,
+        createdAt: new Date()
+      };
+      this.orders.set(id, order);
+      return order;
+    }
   }
 
   async getOrderById(id: string): Promise<Order | undefined> {
-    return this.orders.get(id);
+    try {
+      const result = await supabaseDb
+        .from("orders")
+        .select()
+        .eq("id", id)
+        .single();
+      return result.data || undefined;
+    } catch (error) {
+      console.error("Error fetching order by id:", error);
+      return this.orders.get(id);
+    }
   }
 
   // Videos

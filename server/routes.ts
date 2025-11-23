@@ -121,6 +121,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Orders API
+  app.get("/api/orders", verifyAuth, requireAdmin, async (req, res) => {
+    try {
+      const orders = await storage.getAllOrders();
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
   app.post("/api/orders", async (req, res) => {
     try {
       const validatedData = insertOrderSchema.parse(req.body);
