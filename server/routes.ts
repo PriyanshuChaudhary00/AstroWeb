@@ -117,6 +117,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update appointment status (admin only)
+  app.patch("/api/appointments/:id/status", verifyAuth, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!["pending", "accepted", "declined", "completed"].includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+
+      const appointment = await storage.getAppointmentById(id);
+      if (!appointment) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+
+      // Update appointment status in Supabase
+      const { error } = await supabaseClient
+        .from("appointments")
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      const updatedAppointment = await storage.getAppointmentById(id);
+      res.json(updatedAppointment);
+    } catch (error) {
+      console.error("Update appointment status error:", error);
+      res.status(500).json({ error: "Failed to update appointment" });
+    }
+  });
+
   // Orders API
   app.get("/api/orders", verifyAuth, requireAdmin, async (req, res) => {
     try {

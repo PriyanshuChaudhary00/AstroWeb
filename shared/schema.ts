@@ -57,6 +57,7 @@ export const appointments = pgTable("appointments", {
   time: text("time").notNull(),
   consultationType: text("consultation_type").notNull(), // Personal, Business, Relationship, Health
   message: text("message"),
+  status: text("status").default("pending"), // pending, accepted, declined, completed
   paymentStatus: text("payment_status").default("pending"), // pending, completed, failed
   razorpayOrderId: text("razorpay_order_id"),
   razorpayPaymentId: text("razorpay_payment_id"),

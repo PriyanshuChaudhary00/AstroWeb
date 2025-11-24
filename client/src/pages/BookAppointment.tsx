@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Award, CheckCircle2, Calendar as CalendarIcon, MapPin } from "lucide-react";
+import { Star, Clock, Award, CheckCircle2, Calendar as CalendarIcon, MapPin, Video, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/authContext";
 import type { Appointment } from "@shared/schema";
@@ -21,6 +21,7 @@ export default function BookAppointment() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [consultationType, setConsultationType] = useState("Personal");
   const [isBooking, setIsBooking] = useState(false);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
@@ -31,7 +32,7 @@ export default function BookAppointment() {
   const consultationTypes = ["Personal", "Business", "Relationship", "Health"];
 
   // Fetch appointments for admin
-  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
+  const { data: appointments = [], isLoading: appointmentsLoading, refetch } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments"],
     queryFn: async () => {
       const token = await getAuthToken();
@@ -44,6 +45,47 @@ export default function BookAppointment() {
     },
     enabled: isAdmin && !authLoading
   });
+
+  const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
+    setUpdatingId(appointmentId);
+    try {
+      const token = await getAuthToken();
+      const response = await fetch(`/api/appointments/${appointmentId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) throw new Error("Failed to update status");
+
+      toast({
+        title: "Success",
+        description: `Appointment ${newStatus} successfully`
+      });
+      refetch();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update appointment status"
+      });
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const startMeeting = (appointmentId: string, customerName: string) => {
+    // Create Jitsi meeting room (free, no API key needed)
+    const roomName = `divine-astrology-${appointmentId.substring(0, 8)}`;
+    const meetingUrl = `https://meet.jitsi.org/${roomName}`;
+    window.open(meetingUrl, "_blank");
+    toast({
+      title: "Meeting Started",
+      description: `Opening video room: ${roomName}`
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,8 +198,16 @@ export default function BookAppointment() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Status</p>
-                        <Badge variant={appointment.paymentStatus === "completed" ? "default" : "outline"}>
-                          {appointment.paymentStatus}
+                        <Badge 
+                          variant={
+                            appointment.status === "accepted" ? "default" :
+                            appointment.status === "declined" ? "destructive" :
+                            appointment.status === "completed" ? "secondary" :
+                            "outline"
+                          }
+                          data-testid={`badge-status-${appointment.id}`}
+                        >
+                          {appointment.status}
                         </Badge>
                       </div>
                       <div>
@@ -171,6 +221,55 @@ export default function BookAppointment() {
                       <div className="mt-4 pt-4 border-t">
                         <p className="text-sm text-muted-foreground">Message</p>
                         <p className="text-sm">{appointment.message}</p>
+                      </div>
+                    )}
+                    
+                    {/* Action Buttons */}
+                    {appointment.status === "pending" && (
+                      <div className="mt-4 pt-4 border-t flex gap-2 flex-wrap">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => updateAppointmentStatus(appointment.id, "accepted")}
+                          disabled={updatingId === appointment.id}
+                          data-testid={`button-accept-${appointment.id}`}
+                        >
+                          <Check className="w-4 h-4 mr-2" />
+                          Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => updateAppointmentStatus(appointment.id, "declined")}
+                          disabled={updatingId === appointment.id}
+                          data-testid={`button-decline-${appointment.id}`}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Decline
+                        </Button>
+                      </div>
+                    )}
+
+                    {appointment.status === "accepted" && (
+                      <div className="mt-4 pt-4 border-t flex gap-2 flex-wrap">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => startMeeting(appointment.id, appointment.name)}
+                          data-testid={`button-start-meeting-${appointment.id}`}
+                        >
+                          <Video className="w-4 h-4 mr-2" />
+                          Start Video Meeting
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateAppointmentStatus(appointment.id, "completed")}
+                          disabled={updatingId === appointment.id}
+                          data-testid={`button-complete-${appointment.id}`}
+                        >
+                          Mark Complete
+                        </Button>
                       </div>
                     )}
                   </CardContent>
