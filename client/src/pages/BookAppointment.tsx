@@ -168,7 +168,7 @@ export default function BookAppointment() {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {appointments.map((appointment) => (
+              {Array.isArray(appointments) && appointments.map((appointment) => (
                 <Card key={appointment.id} className="hover-elevate">
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

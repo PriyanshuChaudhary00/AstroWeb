@@ -339,8 +339,12 @@ export class MemStorage implements IStorage {
   // Appointments
   async getAllAppointments(): Promise<Appointment[]> {
     try {
-      const appointments = await getFromDb("appointments");
-      return appointments || [];
+      const data = await getFromDb("appointments");
+      const appointments = Array.isArray(data) ? data : [];
+      return appointments.map((apt: any) => ({
+        ...apt,
+        status: apt.status || "pending"
+      }));
     } catch (error) {
       console.error("Error fetching appointments from Supabase:", error);
       return Array.from(this.appointments.values());
@@ -377,10 +381,20 @@ export class MemStorage implements IStorage {
         .select()
         .eq("id", id)
         .single();
-      return result.data || undefined;
+      const apt = result.data;
+      if (!apt) return undefined;
+      return {
+        ...apt,
+        status: apt.status || "pending"
+      };
     } catch (error) {
       console.error("Error fetching appointment by id:", error);
-      return this.appointments.get(id);
+      const apt = this.appointments.get(id);
+      if (!apt) return undefined;
+      return {
+        ...apt,
+        status: apt.status || "pending"
+      };
     }
   }
 
