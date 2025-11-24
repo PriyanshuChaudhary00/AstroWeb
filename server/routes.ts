@@ -263,28 +263,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Razorpay Integration
+  // Razorpay Integration (Placeholder - keys and actual payment processing are placeholders)
   app.post("/api/payment/create-order", async (req, res) => {
     try {
-      const { amount, currency = "INR", appointmentData } = req.body;
-      const RazorpayModule = await import("razorpay");
-      const Razorpay = RazorpayModule.default;
+      const { amount, currency = "INR" } = req.body;
       
-      const razorpay = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET
-      });
-
-      const options = {
+      // Placeholder: Mock Razorpay order response
+      const mockOrder = {
+        id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         amount: Math.round(amount * 100), // Razorpay uses paise
         currency,
-        receipt: `receipt_${Date.now()}`
+        status: "created"
       };
-
-      const order = await razorpay.orders.create(options);
-      res.json(order);
+      
+      res.json(mockOrder);
     } catch (error) {
-      console.error("Razorpay order creation error:", error);
+      console.error("Payment order error:", error);
       res.status(500).json({ error: "Failed to create payment order" });
     }
   });
@@ -292,20 +286,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/payment/verify-appointment", async (req, res) => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, appointmentData } = req.body;
-      const crypto = await import("crypto");
-
-      // Verify signature
-      const body = razorpay_order_id + "|" + razorpay_payment_id;
-      const expectedSignature = crypto.default
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
-        .update(body)
-        .digest("hex");
-
-      if (expectedSignature !== razorpay_signature) {
-        return res.status(400).json({ error: "Payment verification failed" });
-      }
-
-      // Payment verified - create appointment
+      
+      // Placeholder: Mock verification - in production, verify with Razorpay
+      // For now, all payments are simulated as successful
       const validatedData = insertAppointmentSchema.parse({
         ...appointmentData,
         paymentStatus: "completed",

@@ -63,7 +63,7 @@ export default function BookAppointment() {
     setIsProcessing(true);
 
     try {
-      // Create Razorpay order
+      // Create placeholder payment order
       const orderResponse = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,63 +89,41 @@ export default function BookAppointment() {
         razorpayOrderId: order.id
       };
 
-      // Open Razorpay checkout
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        order_id: order.id,
-        name: "Divine Astrology",
-        description: `Consultation with Pandit Rajesh Sharma`,
-        handler: async (response: any) => {
-          try {
-            // Verify payment
-            const verifyResponse = await fetch("/api/payment/verify-appointment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                appointmentData
-              })
-            });
+      // Simulate payment processing with mock payment response
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate payment processing
 
-            if (!verifyResponse.ok) throw new Error("Payment verification failed");
-            const result = await verifyResponse.json();
-
-            toast({
-              title: "Success",
-              description: "Payment successful! Your appointment has been booked."
-            });
-            
-            // Reset form
-            form.reset();
-            setSelectedTime(null);
-            setDate(new Date());
-          } catch (error) {
-            toast({
-              title: "Error",
-              description: "Payment verification failed. Please try again."
-            });
-          }
-        },
-        prefill: { name, email, contact: phone },
-        theme: { color: "#d4af37" }
+      // Mock payment response
+      const mockPaymentResponse = {
+        razorpay_order_id: order.id,
+        razorpay_payment_id: `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        razorpay_signature: "mock_signature_placeholder"
       };
 
-      // Load and open Razorpay
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => {
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-      };
-      document.body.appendChild(script);
+      // Verify payment (placeholder)
+      const verifyResponse = await fetch("/api/payment/verify-appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...mockPaymentResponse,
+          appointmentData
+        })
+      });
+
+      if (!verifyResponse.ok) throw new Error("Payment verification failed");
+      
+      toast({
+        title: "Success",
+        description: "Your appointment has been booked successfully! Check your email for confirmation."
+      });
+      
+      // Reset form
+      form.reset();
+      setSelectedTime(null);
+      setDate(new Date());
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to initiate payment. Please try again."
+        description: "Failed to book appointment. Please try again."
       });
     } finally {
       setIsProcessing(false);
