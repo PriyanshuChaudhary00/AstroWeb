@@ -20,6 +20,7 @@ export default function BookAppointment() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [consultationType, setConsultationType] = useState("Personal");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
@@ -28,6 +29,7 @@ export default function BookAppointment() {
   ];
 
   const consultationTypes = ["Personal", "Business", "Relationship", "Health"];
+  const CONSULTATION_FEE = 2100;
 
   // Fetch appointments for admin
   const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
@@ -44,12 +46,110 @@ export default function BookAppointment() {
     enabled: isAdmin && !authLoading
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast({
-      title: "Appointment Requested",
-      description: "We'll confirm your booking via email shortly",
-    });
+    
+    const form = e.currentTarget;
+    const name = (form.querySelector("#name") as HTMLInputElement)?.value;
+    const email = (form.querySelector("#email") as HTMLInputElement)?.value;
+    const phone = (form.querySelector("#phone") as HTMLInputElement)?.value;
+    const message = (form.querySelector("#message") as HTMLTextAreaElement)?.value;
+
+    if (!date || !selectedTime || !name || !email || !phone) {
+      toast({ title: "Error", description: "Please fill all required fields" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // Create Razorpay order
+      const orderResponse = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: CONSULTATION_FEE,
+          currency: "INR"
+        })
+      });
+
+      if (!orderResponse.ok) throw new Error("Failed to create payment order");
+      const order = await orderResponse.json();
+
+      // Prepare appointment data
+      const appointmentData = {
+        name,
+        email,
+        phone,
+        date: date.toISOString().split("T")[0],
+        time: selectedTime,
+        consultationType,
+        message: message || null,
+        paymentStatus: "pending",
+        razorpayOrderId: order.id
+      };
+
+      // Open Razorpay checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.id,
+        name: "Divine Astrology",
+        description: `Consultation with Pandit Rajesh Sharma`,
+        handler: async (response: any) => {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch("/api/payment/verify-appointment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                appointmentData
+              })
+            });
+
+            if (!verifyResponse.ok) throw new Error("Payment verification failed");
+            const result = await verifyResponse.json();
+
+            toast({
+              title: "Success",
+              description: "Payment successful! Your appointment has been booked."
+            });
+            
+            // Reset form
+            form.reset();
+            setSelectedTime(null);
+            setDate(new Date());
+          } catch (error) {
+            toast({
+              title: "Error",
+              description: "Payment verification failed. Please try again."
+            });
+          }
+        },
+        prefill: { name, email, contact: phone },
+        theme: { color: "#d4af37" }
+      };
+
+      // Load and open Razorpay
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+      };
+      document.body.appendChild(script);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to initiate payment. Please try again."
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Admin view - show all bookings
@@ -298,8 +398,8 @@ export default function BookAppointment() {
                   </div>
 
                   {/* Submit */}
-                  <Button type="submit" size="lg" className="w-full" data-testid="button-book-now">
-                    Confirm Booking & Pay ₹2,100
+                  <Button type="submit" size="lg" className="w-full" disabled={isProcessing} data-testid="button-book-now">
+                    {isProcessing ? "Processing..." : "Confirm Booking & Pay ₹2,100"}
                   </Button>
                 </form>
               </CardContent>
