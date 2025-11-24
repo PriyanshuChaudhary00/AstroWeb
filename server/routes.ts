@@ -93,9 +93,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertAppointmentSchema.parse(req.body);
       const appointment = await storage.createAppointment(validatedData);
-      
-      // In a real app, this would integrate with Razorpay
-      // For now, we'll just create the appointment
       res.status(201).json(appointment);
     } catch (error) {
       if (error instanceof z.ZodError) {

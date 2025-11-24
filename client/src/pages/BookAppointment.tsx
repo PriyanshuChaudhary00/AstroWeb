@@ -20,7 +20,7 @@ export default function BookAppointment() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [consultationType, setConsultationType] = useState("Personal");
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
@@ -29,7 +29,6 @@ export default function BookAppointment() {
   ];
 
   const consultationTypes = ["Personal", "Business", "Relationship", "Health"];
-  const CONSULTATION_FEE = 2100;
 
   // Fetch appointments for admin
   const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
@@ -60,23 +59,10 @@ export default function BookAppointment() {
       return;
     }
 
-    setIsProcessing(true);
+    setIsBooking(true);
 
     try {
-      // Create placeholder payment order
-      const orderResponse = await fetch("/api/payment/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: CONSULTATION_FEE,
-          currency: "INR"
-        })
-      });
-
-      if (!orderResponse.ok) throw new Error("Failed to create payment order");
-      const order = await orderResponse.json();
-
-      // Prepare appointment data
+      // Create free appointment
       const appointmentData = {
         name,
         email,
@@ -84,32 +70,16 @@ export default function BookAppointment() {
         date: date.toISOString().split("T")[0],
         time: selectedTime,
         consultationType,
-        message: message || null,
-        paymentStatus: "pending",
-        razorpayOrderId: order.id
+        message: message || null
       };
 
-      // Simulate payment processing with mock payment response
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate payment processing
-
-      // Mock payment response
-      const mockPaymentResponse = {
-        razorpay_order_id: order.id,
-        razorpay_payment_id: `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        razorpay_signature: "mock_signature_placeholder"
-      };
-
-      // Verify payment (placeholder)
-      const verifyResponse = await fetch("/api/payment/verify-appointment", {
+      const response = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...mockPaymentResponse,
-          appointmentData
-        })
+        body: JSON.stringify(appointmentData)
       });
 
-      if (!verifyResponse.ok) throw new Error("Payment verification failed");
+      if (!response.ok) throw new Error("Failed to book appointment");
       
       toast({
         title: "Success",
@@ -126,7 +96,7 @@ export default function BookAppointment() {
         description: "Failed to book appointment. Please try again."
       });
     } finally {
-      setIsProcessing(false);
+      setIsBooking(false);
     }
   };
 
@@ -278,8 +248,8 @@ export default function BookAppointment() {
 
                 <div className="pt-4 border-t">
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Consultation Fee</p>
-                    <p className="text-3xl font-bold text-accent" data-testid="text-fee">₹2,100</p>
+                    <p className="text-sm text-muted-foreground mb-2">Consultation</p>
+                    <p className="text-xl font-bold text-accent" data-testid="text-fee">FREE</p>
                   </div>
                 </div>
               </CardContent>
@@ -376,8 +346,8 @@ export default function BookAppointment() {
                   </div>
 
                   {/* Submit */}
-                  <Button type="submit" size="lg" className="w-full" disabled={isProcessing} data-testid="button-book-now">
-                    {isProcessing ? "Processing..." : "Confirm Booking & Pay ₹2,100"}
+                  <Button type="submit" size="lg" className="w-full" disabled={isBooking} data-testid="button-book-now">
+                    {isBooking ? "Booking..." : "Book Appointment (Free)"}
                   </Button>
                 </form>
               </CardContent>
