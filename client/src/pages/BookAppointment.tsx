@@ -77,13 +77,13 @@ export default function BookAppointment() {
   };
 
   const startMeeting = (appointmentId: string, customerName: string) => {
-    // Create Jitsi meeting room (free, no API key needed)
-    const roomName = `divine-astrology-${appointmentId.substring(0, 8)}`;
-    const meetingUrl = `https://meet.jitsi.org/${roomName}`;
+    // Create Google Meet room (free, no API key needed)
+    const roomId = appointmentId.substring(0, 21).replace(/-/g, "").toLowerCase();
+    const meetingUrl = `https://meet.google.com/${roomId}`;
     window.open(meetingUrl, "_blank");
     toast({
-      title: "Meeting Started",
-      description: `Opening video room: ${roomName}`
+      title: "Google Meet Opened",
+      description: `Share this link with the customer: ${meetingUrl}`
     });
   };
 
