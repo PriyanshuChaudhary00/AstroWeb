@@ -267,7 +267,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/payment/create-order", async (req, res) => {
     try {
       const { amount, currency = "INR", appointmentData } = req.body;
-      const Razorpay = require("razorpay");
+      const RazorpayModule = await import("razorpay");
+      const Razorpay = RazorpayModule.default;
       
       const razorpay = new Razorpay({
         key_id: process.env.RAZORPAY_KEY_ID,
@@ -291,12 +292,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/payment/verify-appointment", async (req, res) => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, appointmentData } = req.body;
-      const crypto = require("crypto");
+      const crypto = await import("crypto");
 
       // Verify signature
       const body = razorpay_order_id + "|" + razorpay_payment_id;
-      const expectedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      const expectedSignature = crypto.default
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
         .update(body)
         .digest("hex");
 
