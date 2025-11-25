@@ -8,6 +8,7 @@ import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { BlogSection } from "@/components/BlogSection";
 import { FAQSection } from "@/components/FAQSection";
 import remediesIcon from "@assets/dharma-4898937_640_1764074806576.webp";
+import zodiacBackground from "@assets/Gemini_Generated_Image_zfkkiizfkkiizfkk_1764098153309.png";
 
 export default function Home() {
   const features = [
@@ -99,10 +100,10 @@ export default function Home() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&h=1080&fit=crop')",
+            backgroundImage: `url(${zodiacBackground})`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/80 to-primary/95"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/70 via-violet-900/60 to-purple-900/75"></div>
         </div>
 
         {/* Content */}
