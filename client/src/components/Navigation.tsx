@@ -56,11 +56,67 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
 
-            <Link href="/book-appointment">
-              <Button variant="ghost" size="sm" data-testid="link-book-appointment" className={location === "/book-appointment" ? "bg-accent/10" : ""}>
-                Book Consultation
-              </Button>
-            </Link>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-sm font-medium" data-testid="button-consultation-menu">
+                    Book a Consultation Now
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[400px] p-4">
+                      <Link href="/book-appointment?type=horoscope">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-horoscope">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Horoscope Analysis
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                      <Link href="/book-appointment?type=matchmaking">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-matchmaking">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Match Making Consultation
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                      <Link href="/book-appointment?type=gemstones">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-gemstones">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Gemstones Consultation
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                      <Link href="/book-appointment?type=mahavasatu">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-mahavasatu">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Maha Vastu Consultation
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                      <Link href="/book-appointment?type=childbirth">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-childbirth">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Childbirth Consultation Service
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                      <Link href="/book-appointment?type=birthtime">
+                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-birthtime">
+                          <div className="text-sm font-medium leading-none flex items-center justify-between">
+                            Birth Time Rectification
+                            <span className="text-xs text-muted-foreground">›</span>
+                          </div>
+                        </NavigationMenuLink>
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
 
             <NavigationMenu>
               <NavigationMenuList>
@@ -171,9 +227,35 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                   </div>
 
                   <div className="border-t pt-4 space-y-1">
-                    <Link href="/book-appointment">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-appointment">
-                        Book Consultation
+                    <p className="text-sm font-semibold text-muted-foreground px-2">Book a Consultation</p>
+                    <Link href="/book-appointment?type=horoscope">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-horoscope">
+                        Horoscope Analysis
+                      </Button>
+                    </Link>
+                    <Link href="/book-appointment?type=matchmaking">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-matchmaking">
+                        Match Making Consultation
+                      </Button>
+                    </Link>
+                    <Link href="/book-appointment?type=gemstones">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-gemstones">
+                        Gemstones Consultation
+                      </Button>
+                    </Link>
+                    <Link href="/book-appointment?type=mahavasatu">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-mahavasatu">
+                        Maha Vastu Consultation
+                      </Button>
+                    </Link>
+                    <Link href="/book-appointment?type=childbirth">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-childbirth">
+                        Childbirth Consultation Service
+                      </Button>
+                    </Link>
+                    <Link href="/book-appointment?type=birthtime">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-consultation-birthtime">
+                        Birth Time Rectification
                       </Button>
                     </Link>
                   </div>
