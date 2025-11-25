@@ -177,28 +177,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 lg:py-24 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4" data-testid="text-featured-title">
-              Featured Products
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Handpicked gemstones and spiritual remedies for your transformation
-            </p>
-          </div>
-
-          <ProductGrid category="featured" limit={6} />
-
-          <div className="text-center mt-12">
-            <Link href="/products">
-              <Button size="lg" variant="outline" data-testid="button-view-all">
-                View All Products
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+      {/* CTA Section - Book Consultation */}
+      <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 lg:px-8 text-center">
+          <Sparkles className="h-12 w-12 text-accent mx-auto mb-6" />
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
+            Begin Your Spiritual Journey Today
+          </h2>
+          <p className="text-primary-foreground/90 text-lg max-w-2xl mx-auto mb-8">
+            Connect with our expert astrologers and discover the perfect remedies for your life path
+          </p>
+          <Link href="/book-appointment">
+            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" data-testid="button-cta-appointment">
+              Book Your Consultation Now
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </section>
 
