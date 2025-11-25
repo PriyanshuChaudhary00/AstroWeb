@@ -341,8 +341,8 @@ export default function BookAppointment() {
             <Card className="sticky top-24">
               <CardContent className="p-6 space-y-6">
                 <div className="text-center">
-                  <Avatar className="w-64 h-64 mx-auto mb-6">
-                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" className="object-cover object-center w-full h-full scale-125" />
+                  <Avatar className="w-64 h-64 mx-auto mb-6 overflow-hidden">
+                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" className="object-cover object-center w-full h-full scale-150" />
                     <AvatarFallback>AOS</AvatarFallback>
                   </Avatar>
                   <h3 className="font-serif text-2xl font-bold mb-2" data-testid="text-astrologer-name">
