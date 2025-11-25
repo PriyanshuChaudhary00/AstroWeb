@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Shield, Award, TrendingUp, Star, CheckCircle2, ArrowRight } from "lucide-react";
+import { Sparkles, Shield, Award, TrendingUp, Star, CheckCircle2, ArrowRight, Zap } from "lucide-react";
 import { ProductGrid } from "@/components/ProductGrid";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { BlogSection } from "@/components/BlogSection";
@@ -74,6 +74,21 @@ export default function Home() {
     "Secure online payments",
     "Fast & safe delivery",
     "100% satisfaction guarantee"
+  ];
+
+  const horoscope = [
+    { sign: "Aries", prediction: "Financial gain, happiness from vehicle & beloved." },
+    { sign: "Taurus", prediction: "Cure from disease, money gain, good fortune." },
+    { sign: "Gemini", prediction: "Disturbance, loss, attachment, health issues." },
+    { sign: "Cancer", prediction: "Fear, quarrel, restlessness, loss, tough time." },
+    { sign: "Leo", prediction: "Victory, money gain, happiness, good health." },
+    { sign: "Virgo", prediction: "Financial loss, dissatisfaction, tough fortune." },
+    { sign: "Libra", prediction: "Fortune rise, good health, happiness, honor." },
+    { sign: "Scorpio", prediction: "Mental/physical pain, loss of money & respect." },
+    { sign: "Sagittarius", prediction: "Money gain, happiness, good health." },
+    { sign: "Capricorn", prediction: "Work accomplished, good health, fortune." },
+    { sign: "Aquarius", prediction: "Disease, fear, loss in work, argument." },
+    { sign: "Pisces", prediction: "Health issues, fear, quarrel, worry, tough time." },
   ];
 
   return (
@@ -196,6 +211,44 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Daily Horoscope Section */}
+      <section className="py-16 lg:py-24 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Zap className="h-8 w-8 text-accent" />
+              <h2 className="font-serif text-3xl md:text-4xl font-bold">Daily Horoscope</h2>
+              <Zap className="h-8 w-8 text-accent" />
+            </div>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Discover what the stars have in store for you today
+            </p>
+          </div>
+
+          <div className="overflow-x-auto pb-4 -mx-4 lg:mx-0">
+            <div className="flex gap-4 px-4 lg:px-0 min-w-min lg:min-w-full lg:flex-wrap lg:justify-center">
+              {horoscope.map((item, index) => (
+                <Card
+                  key={index}
+                  className="flex-shrink-0 w-72 lg:w-64 bg-gradient-to-br from-accent/10 to-primary/5 border-accent/20 hover-elevate active-elevate-2 transition-all duration-300"
+                  data-testid={`card-horoscope-${item.sign.toLowerCase()}`}
+                >
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <h3 className="font-serif text-2xl font-bold text-accent mb-1">{item.sign}</h3>
+                      <div className="h-1 w-12 bg-gradient-to-r from-accent to-primary/50 rounded-full"></div>
+                    </div>
+                    <p className="text-foreground/80 text-sm leading-relaxed">
+                      {item.prediction}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trust Section */}
       <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 lg:px-8">
@@ -276,24 +329,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
-          <Sparkles className="h-12 w-12 text-accent mx-auto mb-6" />
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
-            Begin Your Spiritual Journey Today
-          </h2>
-          <p className="text-primary-foreground/90 text-lg max-w-2xl mx-auto mb-8">
-            Connect with our expert astrologers and discover the perfect remedies for your life path
-          </p>
-          <Link href="/book-appointment">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90" data-testid="button-cta-appointment">
-              Book Your Consultation Now
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }
