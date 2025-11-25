@@ -342,13 +342,17 @@ export default function BookAppointment() {
                 <div className="text-center">
                   <Avatar className="w-24 h-24 mx-auto mb-4">
                     <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" />
-                    <AvatarFallback>PJ</AvatarFallback>
+                    <AvatarFallback>AOS</AvatarFallback>
                   </Avatar>
                   <h3 className="font-serif text-2xl font-bold mb-2" data-testid="text-astrologer-name">
-                    Pandit Rajesh Sharma
+                    ACHARYA OM SHAH KASHYAP
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Senior Vedic Astrologer
+                  <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                    Jyotish Acharya (Gold Medal)<br/>
+                    Bhartiya Vidya Bhawan<br/>
+                    M.A. Astrology, UOU, Uttarakhand<br/>
+                    Medical Astrology (Diploma), SLBSNSU<br/>
+                    Vaastu Shastra (Diploma), BVB–Delhi
                   </p>
                   <div className="flex items-center justify-center gap-1 mb-4">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -358,35 +362,44 @@ export default function BookAppointment() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 border-t pt-3">
                   <div className="flex items-start gap-3">
-                    <Award className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                    <MapPin className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold text-sm">25+ Years Experience</p>
-                      <p className="text-xs text-muted-foreground">Expert in Vedic Astrology</p>
+                      <p className="font-semibold text-sm">Address</p>
+                      <p className="text-xs text-muted-foreground">133 D, India Expo Plaza<br/>Knowledge Park II Metro<br/>Greater Noida, 201310</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                    <Award className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold text-sm">Certified Astrologer</p>
-                      <p className="text-xs text-muted-foreground">IVA & ICAS Certified</p>
+                      <p className="font-semibold text-sm">Email</p>
+                      <p className="text-xs text-muted-foreground break-all">acharyaomshah@gmail.com</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Clock className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold text-sm">60-Minute Session</p>
-                      <p className="text-xs text-muted-foreground">Detailed analysis & remedies</p>
+                      <p className="font-semibold text-sm">Phone</p>
+                      <p className="text-xs text-muted-foreground">+91 85275 30910</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t">
-                  <div className="text-center">
+                  <div className="text-center mb-4">
                     <p className="text-sm text-muted-foreground mb-2">Consultation</p>
                     <p className="text-xl font-bold text-accent" data-testid="text-fee">FREE</p>
                   </div>
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3603.8891485846584!2d77.59521672346898!3d28.474598574237747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce6cc0c00c001%3A0x1234567890ab!2s133%20D%2C%20India%20Expo%20Plaza%2C%20Knowledge%20Park%20II%2C%20Greater%20Noida%2C%20Uttar%20Pradesh%20201310!5e0!3m2!1sen!2sin!4v1700000000000"
+                    width="100%"
+                    height="300"
+                    style={{ border: 0, borderRadius: "0.5rem" }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </CardContent>
             </Card>
