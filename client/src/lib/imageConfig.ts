@@ -1,7 +1,7 @@
 // Pandit Image Configuration - Easy to adjust
 export const panditImageConfig = {
   // Avatar container size (w-{size} h-{size})
-  size: "64", // Options: "48", "56", "64", "80" (default: "64")
+  size: "54", // Options: "48", "56", "64", "80" (default: "64")
   
   // Image zoom/scale (scale-{value})
   scale: "150", // Options: "100", "125", "150", "175", "200"
