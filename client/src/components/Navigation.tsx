@@ -63,55 +63,57 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                     Book a Consultation Now
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="w-[400px] p-4">
-                      <Link href="/book-appointment?type=horoscope">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-horoscope">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Horoscope Analysis
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
-                      <Link href="/book-appointment?type=matchmaking">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-matchmaking">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Match Making Consultation
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
-                      <Link href="/book-appointment?type=gemstones">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-gemstones">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Gemstones Consultation
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
-                      <Link href="/book-appointment?type=mahavasatu">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-mahavasatu">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Maha Vastu Consultation
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
-                      <Link href="/book-appointment?type=childbirth">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-childbirth">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Childbirth Consultation Service
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
-                      <Link href="/book-appointment?type=birthtime">
-                        <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover-elevate active-elevate-2" data-testid="link-consultation-birthtime">
-                          <div className="text-sm font-medium leading-none flex items-center justify-between">
-                            Birth Time Rectification
-                            <span className="text-xs text-muted-foreground">›</span>
-                          </div>
-                        </NavigationMenuLink>
-                      </Link>
+                    <div className="grid w-[800px] grid-cols-2 gap-6 p-6">
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Horoscope Analysis</p>
+                          <Link href="/book-appointment?service=horoscope-single">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Written Maha Consultation Report</p>
+                          </Link>
+                          <Link href="/book-appointment?service=horoscope-complete">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Complete Consultation</p>
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Match Making Consultation</p>
+                          <Link href="/book-appointment?service=matchmaking">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Love marriage guidance</p>
+                          </Link>
+                          <Link href="/book-appointment?service=muhurta">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Marriage Timing & Muhurta</p>
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Gemstones Consultation</p>
+                          <Link href="/book-appointment?service=gemstones">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Gemstone Recommendations</p>
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Maha Vastu Consultation</p>
+                          <Link href="/book-appointment?service=varshaphal">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Yearly Horoscope</p>
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Childbirth Consultation Service</p>
+                          <Link href="/book-appointment?service=childbirth">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Childbirth Analysis</p>
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground mb-3">Birth Time Rectification</p>
+                          <Link href="/book-appointment?service=birthtime">
+                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Birth Time Correction</p>
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <p className="text-sm font-semibold text-foreground">More Services</p>
+                        <Link href="/book-appointment?service=prashna">
+                          <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Prashna Kundali</p>
+                        </Link>
+                      </div>
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>

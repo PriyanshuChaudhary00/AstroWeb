@@ -1,4 +1,4 @@
- import { useState } from "react";
+ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,15 @@ export default function BookAppointment() {
   const [consultationType, setConsultationType] = useState("Personal");
   const [isBooking, setIsBooking] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const service = params.get("service");
+    if (service) {
+      setSelectedService(service);
+    }
+  }, []);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
@@ -35,39 +44,70 @@ export default function BookAppointment() {
       id: "prashna",
       name: "PRASHNA KUNDALI",
       description: "Prashna Kundali, also known as Horary Astrology, is a Vedic astrology practice that answers specific questions by analyzing the time and place of the question.",
-      price: "INR 2100"
+      price: "INR 2100",
+      category: "horoscope"
     },
     {
       id: "horoscope-single",
       name: "HOROSCOPE ANALYSIS (ONE SPECIFIC FIELD)",
       description: "Horoscope analysis is the practice of interpreting a person's birth chart to learn about their personality, relationships, career, finance, and destiny.",
-      price: "INR 3100"
+      price: "INR 3100",
+      category: "horoscope"
     },
     {
       id: "horoscope-complete",
       name: "COMPLETE HOROSCOPE ANALYSIS",
       description: "Complete interpretation of a person's birth chart to analyze his/her personality, relationships, career, finance, and destiny with respect to one complete Antardasha period & possible astrological solutions/remedies.",
-      price: "INR 5100"
+      price: "INR 5100",
+      category: "horoscope"
     },
     {
       id: "varshaphal",
       name: "VARSHAPHAL (YEARLY HOROSCOPE)",
       description: "Varshaphal is the complete prediction for one-year period starting from your present birth date. It is recommended for anyone who wants to plan the whole year ahead.",
-      price: "INR 6100"
+      price: "INR 6100",
+      category: "vastu"
     },
     {
       id: "muhurta",
       name: "MUHURTA",
       description: "A 'muhurta selection' is an astrological calculation to determine the most favorable and auspicious time to begin significant life events like marriage, travel, business inaugurations, or moving into a new house.",
-      price: "INR 6100"
+      price: "INR 6100",
+      category: "matchmaking"
     },
     {
       id: "matchmaking",
       name: "MATCH MAKING (KUNDALI MILAAN)",
       description: "Match Making, also called Ashtakoot Milaan, matches kundlis of a prospective bride and groom to understand the astrological compatibility of their marriage based on their horoscopes.",
-      price: "INR 6100"
+      price: "INR 6100",
+      category: "matchmaking"
+    },
+    {
+      id: "gemstones",
+      name: "GEMSTONES CONSULTATION",
+      description: "Expert guidance on selecting the most suitable gemstones based on your birth chart and astrological placements to enhance positive energies and mitigate negative influences.",
+      price: "INR 4100",
+      category: "gemstones"
+    },
+    {
+      id: "childbirth",
+      name: "CHILDBIRTH CONSULTATION SERVICE",
+      description: "Specialized consultation for childbirth timing, baby's auspicious birth details, and early life horoscope analysis.",
+      price: "INR 5100",
+      category: "childbirth"
+    },
+    {
+      id: "birthtime",
+      name: "BIRTH TIME RECTIFICATION",
+      description: "Accurate determination and correction of your birth time through detailed event analysis for precise astrological calculations.",
+      price: "INR 4100",
+      category: "birthtime"
     }
   ];
+
+  const filteredServices = selectedService 
+    ? services.filter(s => s.id === selectedService)
+    : services;
 
   // Fetch appointments for admin
   const { data: appointments = [], isLoading: appointmentsLoading, refetch } = useQuery<Appointment[]>({
