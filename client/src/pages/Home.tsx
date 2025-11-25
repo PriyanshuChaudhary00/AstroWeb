@@ -98,8 +98,7 @@ export default function Home() {
           
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 max-w-4xl mx-auto leading-tight" data-testid="text-hero-title">
             Awaken Your{" "}
-            <span className="text-accent">Jyoti</span>
-            {" "}Divine Light Guiding Your Cosmic Destiny
+            <span className="text-accent">ज्योति</span>
           </h1>
           
           <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-description">
