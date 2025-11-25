@@ -1,12 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { supabaseDb } from "./supabase";
+import { supabaseDb, initializeDatabase } from "./supabase";
 import { insertAppointmentSchema, insertOrderSchema, contactFormSchema, insertVideoSchema, type User } from "@shared/schema";
 import { z } from "zod";
 import { verifyAuth, requireAdmin, type AuthRequest } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize database on startup
+  await initializeDatabase();
   // Products API
   app.get("/api/products", async (req, res) => {
     try {
