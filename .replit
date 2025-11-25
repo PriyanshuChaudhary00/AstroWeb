@@ -15,6 +15,10 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
+localPort = 32777
+externalPort = 5173
+
+[[ports]]
 localPort = 32915
 externalPort = 4200
 
@@ -65,7 +69,7 @@ waitForPort = 5000
 [userenv]
 
 [userenv.shared]
-VITE_SUPABASE_URL = "https://nsaoquxmxmpisfsrpwid.supabase.co"
-VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zYW9xdXhteG1waXNmc3Jwd2lkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MDAwODMsImV4cCI6MjA3OTE3NjA4M30.fu3ygXiVlEom0gbbJfKtWA7NzJx3TUsCPUR68qaDpv4"
+VITE_SUPABASE_URL = "https://cxanroyrcrsacyvlehxb.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4YW5yb3lyY3JzYWN5dmxlaHhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwODI1NDcsImV4cCI6MjA3OTY1ODU0N30.VYCdmvFjopRd06VqhzLN8wI_i93vaz-8kEGPnlvj0Hc"
 RAZORPAY_KEY_ID = "rzp_test_xxxxxxxxxxxx"
 RAZORPAY_KEY_SECRET = "your-secret-key"
