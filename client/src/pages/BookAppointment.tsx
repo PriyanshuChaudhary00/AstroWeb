@@ -29,7 +29,44 @@ export default function BookAppointment() {
     "05:00 PM", "06:00 PM", "07:00 PM"
   ];
 
-  const consultationTypes = ["Personal", "Business", "Relationship", "Health"];
+  const services = [
+    {
+      id: "prashna",
+      name: "PRASHNA KUNDALI",
+      description: "Prashna Kundali, also known as Horary Astrology, is a Vedic astrology practice that answers specific questions by analyzing the time and place of the question.",
+      price: "INR 2100"
+    },
+    {
+      id: "horoscope-single",
+      name: "HOROSCOPE ANALYSIS (ONE SPECIFIC FIELD)",
+      description: "Horoscope analysis is the practice of interpreting a person's birth chart to learn about their personality, relationships, career, finance, and destiny.",
+      price: "INR 3100"
+    },
+    {
+      id: "horoscope-complete",
+      name: "COMPLETE HOROSCOPE ANALYSIS",
+      description: "Complete interpretation of a person's birth chart to analyze his/her personality, relationships, career, finance, and destiny with respect to one complete Antardasha period & possible astrological solutions/remedies.",
+      price: "INR 5100"
+    },
+    {
+      id: "varshaphal",
+      name: "VARSHAPHAL (YEARLY HOROSCOPE)",
+      description: "Varshaphal is the complete prediction for one-year period starting from your present birth date. It is recommended for anyone who wants to plan the whole year ahead.",
+      price: "INR 6100"
+    },
+    {
+      id: "muhurta",
+      name: "MUHURTA",
+      description: "A 'muhurta selection' is an astrological calculation to determine the most favorable and auspicious time to begin significant life events like marriage, travel, business inaugurations, or moving into a new house.",
+      price: "INR 6100"
+    },
+    {
+      id: "matchmaking",
+      name: "MATCH MAKING (KUNDALI MILAAN)",
+      description: "Match Making, also called Ashtakoot Milaan, matches kundlis of a prospective bride and groom to understand the astrological compatibility of their marriage based on their horoscopes.",
+      price: "INR 6100"
+    }
+  ];
 
   // Fetch appointments for admin
   const { data: appointments = [], isLoading: appointmentsLoading, refetch } = useQuery<Appointment[]>({
@@ -383,20 +420,27 @@ export default function BookAppointment() {
                     </div>
                   </div>
 
-                  {/* Consultation Type */}
-                  <div className="space-y-2">
-                    <Label>Consultation Type</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {consultationTypes.map((type) => (
-                        <Button
-                          key={type}
-                          type="button"
-                          variant={consultationType === type ? "default" : "outline"}
-                          onClick={() => setConsultationType(type)}
-                          data-testid={`button-type-${type.toLowerCase()}`}
+                  {/* Services */}
+                  <div className="space-y-3">
+                    <Label>Select Service *</Label>
+                    <div className="space-y-3">
+                      {services.map((service) => (
+                        <div
+                          key={service.id}
+                          onClick={() => setConsultationType(service.name)}
+                          className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover-elevate ${
+                            consultationType === service.name
+                              ? "border-accent bg-accent/10"
+                              : "border-border bg-background"
+                          }`}
+                          data-testid={`button-service-${service.id}`}
                         >
-                          {type}
-                        </Button>
+                          <div className="flex justify-between items-start gap-2 mb-2">
+                            <h3 className="font-semibold text-sm leading-tight flex-1">{service.name}</h3>
+                            <span className="text-accent font-bold text-sm whitespace-nowrap">{service.price}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{service.description}</p>
+                        </div>
                       ))}
                     </div>
                   </div>
