@@ -77,18 +77,18 @@ export default function Home() {
   ];
 
   const horoscope = [
-    { sign: "Aries", prediction: "Financial gain, happiness from vehicle & beloved." },
-    { sign: "Taurus", prediction: "Cure from disease, money gain, good fortune." },
-    { sign: "Gemini", prediction: "Disturbance, loss, attachment, health issues." },
-    { sign: "Cancer", prediction: "Fear, quarrel, restlessness, loss, tough time." },
-    { sign: "Leo", prediction: "Victory, money gain, happiness, good health." },
-    { sign: "Virgo", prediction: "Financial loss, dissatisfaction, tough fortune." },
-    { sign: "Libra", prediction: "Fortune rise, good health, happiness, honor." },
-    { sign: "Scorpio", prediction: "Mental/physical pain, loss of money & respect." },
-    { sign: "Sagittarius", prediction: "Money gain, happiness, good health." },
-    { sign: "Capricorn", prediction: "Work accomplished, good health, fortune." },
-    { sign: "Aquarius", prediction: "Disease, fear, loss in work, argument." },
-    { sign: "Pisces", prediction: "Health issues, fear, quarrel, worry, tough time." },
+    { sign: "Aries", prediction: "Financial gain, happiness from vehicle & beloved.", symbol: "♈", color: "from-red-500 to-orange-500" },
+    { sign: "Taurus", prediction: "Cure from disease, money gain, good fortune.", symbol: "♉", color: "from-green-600 to-emerald-500" },
+    { sign: "Gemini", prediction: "Disturbance, loss, attachment, health issues.", symbol: "♊", color: "from-yellow-500 to-amber-500" },
+    { sign: "Cancer", prediction: "Fear, quarrel, restlessness, loss, tough time.", symbol: "♋", color: "from-blue-600 to-cyan-500" },
+    { sign: "Leo", prediction: "Victory, money gain, happiness, good health.", symbol: "♌", color: "from-orange-500 to-red-500" },
+    { sign: "Virgo", prediction: "Financial loss, dissatisfaction, tough fortune.", symbol: "♍", color: "from-emerald-600 to-teal-500" },
+    { sign: "Libra", prediction: "Fortune rise, good health, happiness, honor.", symbol: "♎", color: "from-pink-500 to-rose-500" },
+    { sign: "Scorpio", prediction: "Mental/physical pain, loss of money & respect.", symbol: "♏", color: "from-purple-600 to-indigo-500" },
+    { sign: "Sagittarius", prediction: "Money gain, happiness, good health.", symbol: "♐", color: "from-violet-600 to-purple-500" },
+    { sign: "Capricorn", prediction: "Work accomplished, good health, fortune.", symbol: "♑", color: "from-slate-600 to-gray-600" },
+    { sign: "Aquarius", prediction: "Disease, fear, loss in work, argument.", symbol: "♒", color: "from-cyan-500 to-blue-500" },
+    { sign: "Pisces", prediction: "Health issues, fear, quarrel, worry, tough time.", symbol: "♓", color: "from-teal-500 to-green-500" },
   ];
 
   return (
@@ -234,6 +234,9 @@ export default function Home() {
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
+                    <div className={`flex-shrink-0 w-20 h-20 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white shadow-lg`}>
+                      <span className="text-4xl">{item.symbol}</span>
+                    </div>
                     <div className="flex-1">
                       <h3 className="font-serif text-2xl font-bold text-accent mb-2">{item.sign}</h3>
                       <div className="h-1 w-12 bg-gradient-to-r from-accent to-primary/50 rounded-full mb-4"></div>
