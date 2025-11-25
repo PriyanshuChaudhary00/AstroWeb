@@ -14,7 +14,6 @@ import { useAuth } from "@/lib/authContext";
 import type { Appointment } from "@shared/schema";
 import { getAuthToken } from "@/lib/supabase";
 import panditImage from "@assets/file_1764065879151.png";
-import { panditImageConfig } from "@/lib/imageConfig";
 
 export default function BookAppointment() {
   const { toast } = useToast();
@@ -342,8 +341,8 @@ export default function BookAppointment() {
             <Card className="sticky top-24">
               <CardContent className="p-6 space-y-6">
                 <div className="text-center">
-                  <Avatar className={`w-${panditImageConfig.size} h-${panditImageConfig.size} mx-auto mb-6 overflow-hidden`}>
-                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" className={`object-cover object-center w-full h-full scale-${panditImageConfig.scale}`} />
+                  <Avatar className="w-24 h-24 mx-auto mb-4">
+                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" />
                     <AvatarFallback>AOS</AvatarFallback>
                   </Avatar>
                   <h3 className="font-serif text-2xl font-bold mb-2" data-testid="text-astrologer-name">
