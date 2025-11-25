@@ -13,7 +13,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   isAdmin: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (name: string, email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -114,13 +114,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription?.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (name: string, email: string, password: string) => {
     try {
       const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           data: {
+            full_name: name,
             email: email
           }
         }
@@ -140,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: email,
             isAdmin: adminStatus,
             accountType: accountType,
-            fullName: ""
+            fullName: name
           })
         }).catch(err => console.log("User profile save failed:", err));
       }

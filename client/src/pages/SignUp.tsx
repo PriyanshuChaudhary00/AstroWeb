@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/authContext";
 
 export default function SignUp() {
   const [, setLocation] = useLocation();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +20,7 @@ export default function SignUp() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -48,7 +49,7 @@ export default function SignUp() {
 
     setIsLoading(true);
     try {
-      await signUp(email, password);
+      await signUp(name, email, password);
       toast({
         title: "Success",
         description: "Account created! Please check your email to verify."
@@ -77,6 +78,18 @@ export default function SignUp() {
         </div>
 
         <form onSubmit={handleSignUp} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Full Name</label>
+            <Input
+              type="text"
+              placeholder="Your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
+              data-testid="input-signup-name"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
             <Input

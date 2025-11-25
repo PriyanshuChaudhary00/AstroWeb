@@ -113,9 +113,9 @@ export default function Login() {
           </div>
 
           <div className="pt-3 border-t">
-            <p className="text-xs text-muted-foreground mb-2">Demo Credentials:</p>
-            <p className="text-xs">Email: admin@example.com</p>
-            <p className="text-xs">Password: admin123</p>
+            <p className="text-xs text-muted-foreground mb-2">Admin Credentials:</p>
+            <p className="text-xs">Email: veernandan00u@gmail.com</p>
+            <p className="text-xs">Password: veer1234</p>
           </div>
         </div>
       </Card>
