@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Play, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/authContext";
+import { getAuthToken } from "@/lib/supabase";
 import type { Video } from "@shared/schema";
 
 export default function Videos() {
@@ -46,9 +47,18 @@ export default function Videos() {
     }
 
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
       const response = await fetch("/api/videos", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           title: videoTitle,
           youtubeUrl: youtubeUrl,
