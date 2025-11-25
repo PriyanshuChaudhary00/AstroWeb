@@ -56,69 +56,110 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
 
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-medium" data-testid="button-consultation-menu">
-                    Book a Consultation Now
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid w-[800px] grid-cols-2 gap-6 p-6">
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Horoscope Analysis</p>
-                          <Link href="/book-appointment?service=horoscope-single">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Written Maha Consultation Report</p>
-                          </Link>
-                          <Link href="/book-appointment?service=horoscope-complete">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Complete Consultation</p>
-                          </Link>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Match Making Consultation</p>
-                          <Link href="/book-appointment?service=matchmaking">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Love marriage guidance</p>
-                          </Link>
-                          <Link href="/book-appointment?service=muhurta">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Marriage Timing & Muhurta</p>
-                          </Link>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Gemstones Consultation</p>
-                          <Link href="/book-appointment?service=gemstones">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Gemstone Recommendations</p>
-                          </Link>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Maha Vastu Consultation</p>
-                          <Link href="/book-appointment?service=varshaphal">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Yearly Horoscope</p>
-                          </Link>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Childbirth Consultation Service</p>
-                          <Link href="/book-appointment?service=childbirth">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Childbirth Analysis</p>
-                          </Link>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground mb-3">Birth Time Rectification</p>
-                          <Link href="/book-appointment?service=birthtime">
-                            <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Birth Time Correction</p>
-                          </Link>
-                        </div>
+            <div className="group relative">
+              <Button variant="ghost" size="sm" className="text-sm font-medium" data-testid="button-consultation-menu">
+                Book a Consultation Now
+              </Button>
+              
+              <div className="absolute left-0 mt-0 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="p-2 space-y-1">
+                  <div className="group/item relative">
+                    <Link href="/book-appointment?service=horoscope-single">
+                      <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-horoscope">
+                        <span>Horoscope Analysis</span>
+                        <span className="text-xs">›</span>
                       </div>
-                      <div className="space-y-3">
-                        <p className="text-sm font-semibold text-foreground">More Services</p>
-                        <Link href="/book-appointment?service=prashna">
-                          <p className="text-sm text-foreground/80 hover:text-accent py-2 cursor-pointer">Prashna Kundali</p>
+                    </Link>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=horoscope-single">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Written Maha Consultation Report</div>
+                        </Link>
+                        <Link href="/book-appointment?service=horoscope-complete">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Complete Consultation</div>
                         </Link>
                       </div>
                     </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+                  </div>
+
+                  <div className="group/item relative">
+                    <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-matchmaking">
+                      <span>Match Making Consultation</span>
+                      <span className="text-xs">›</span>
+                    </div>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=matchmaking">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Match Making</div>
+                        </Link>
+                        <Link href="/book-appointment?service=matchmaking">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Love marriage guidance</div>
+                        </Link>
+                        <Link href="/book-appointment?service=muhurta">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Marriage Timing & Muhurta</div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group/item relative">
+                    <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-gemstones">
+                      <span>Gemstones Consultation</span>
+                      <span className="text-xs">›</span>
+                    </div>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=gemstones">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Gemstone Recommendations</div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group/item relative">
+                    <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-mahavasatu">
+                      <span>Maha Vastu Consultation</span>
+                      <span className="text-xs">›</span>
+                    </div>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=varshaphal">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Maha Consultation</div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group/item relative">
+                    <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-childbirth">
+                      <span>Childbirth Consultation Service</span>
+                      <span className="text-xs">›</span>
+                    </div>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=childbirth">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Childbirth Consultation Service</div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group/item relative">
+                    <div className="px-4 py-2 text-sm hover:bg-accent/10 rounded cursor-pointer flex items-center justify-between group-hover/item:text-accent" data-testid="link-consultation-birthtime">
+                      <span>Birth Time Rectification</span>
+                      <span className="text-xs">›</span>
+                    </div>
+                    <div className="absolute left-full top-0 ml-1 w-56 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                      <div className="p-2 space-y-1">
+                        <Link href="/book-appointment?service=birthtime">
+                          <div className="px-4 py-2 text-sm text-foreground/80 hover:bg-accent/10 hover:text-accent rounded cursor-pointer">Birth Time Rectification</div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <NavigationMenu>
               <NavigationMenuList>
