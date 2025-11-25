@@ -44,11 +44,6 @@ export function Footer() {
                   Blog
                 </Button>
               </Link>
-              <Link href="/horoscope">
-                <Button variant="link" className="h-auto p-0 text-sm text-primary-foreground/80 hover:text-accent justify-start" data-testid="link-footer-horoscope">
-                  Daily Horoscope
-                </Button>
-              </Link>
               <Link href="/book-appointment">
                 <Button variant="link" className="h-auto p-0 text-sm text-primary-foreground/80 hover:text-accent justify-start" data-testid="link-footer-appointment">
                   Book Consultation
