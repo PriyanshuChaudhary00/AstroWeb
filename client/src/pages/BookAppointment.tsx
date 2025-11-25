@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -341,8 +341,8 @@ export default function BookAppointment() {
             <Card className="sticky top-24">
               <CardContent className="p-6 space-y-6">
                 <div className="text-center">
-                  <Avatar className="w-24 h-24 mx-auto mb-4">
-                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" />
+                  <Avatar className="w-48 h-48 mx-auto mb-6">
+                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" className="object-cover" />
                     <AvatarFallback>AOS</AvatarFallback>
                   </Avatar>
                   <h3 className="font-serif text-2xl font-bold mb-2" data-testid="text-astrologer-name">
