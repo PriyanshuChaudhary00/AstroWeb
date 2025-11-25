@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/authContext";
 import type { Appointment } from "@shared/schema";
 import { getAuthToken } from "@/lib/supabase";
-import panditImage from "@assets/file_1764065753978.enc";
+import panditImage from "@assets/file_1764065879151.png";
 
 export default function BookAppointment() {
   const { toast } = useToast();
