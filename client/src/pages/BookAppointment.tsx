@@ -34,8 +34,10 @@ export default function BookAppointment() {
       if (foundService) {
         setConsultationType(foundService.name);
       }
+    } else {
+      setSelectedService(null);
     }
-  }, []);
+  }, [window.location.search]);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
