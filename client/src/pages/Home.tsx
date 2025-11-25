@@ -225,26 +225,26 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="overflow-x-auto pb-4 -mx-4 lg:mx-0">
-            <div className="flex gap-4 px-4 lg:px-0 min-w-min lg:min-w-full lg:flex-wrap lg:justify-center">
-              {horoscope.map((item, index) => (
-                <Card
-                  key={index}
-                  className="flex-shrink-0 w-72 lg:w-64 bg-gradient-to-br from-accent/10 to-primary/5 border-accent/20 hover-elevate active-elevate-2 transition-all duration-300"
-                  data-testid={`card-horoscope-${item.sign.toLowerCase()}`}
-                >
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <h3 className="font-serif text-2xl font-bold text-accent mb-1">{item.sign}</h3>
-                      <div className="h-1 w-12 bg-gradient-to-r from-accent to-primary/50 rounded-full"></div>
+          <div className="space-y-4 max-w-3xl mx-auto">
+            {horoscope.map((item, index) => (
+              <Card
+                key={index}
+                className="bg-gradient-to-br from-accent/10 to-primary/5 border-accent/20 hover-elevate active-elevate-2 transition-all duration-300"
+                data-testid={`card-horoscope-${item.sign.toLowerCase()}`}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1">
+                      <h3 className="font-serif text-2xl font-bold text-accent mb-2">{item.sign}</h3>
+                      <div className="h-1 w-12 bg-gradient-to-r from-accent to-primary/50 rounded-full mb-4"></div>
+                      <p className="text-foreground/80 text-sm leading-relaxed">
+                        {item.prediction}
+                      </p>
                     </div>
-                    <p className="text-foreground/80 text-sm leading-relaxed">
-                      {item.prediction}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
