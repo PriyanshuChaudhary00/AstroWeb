@@ -396,7 +396,7 @@ export default function BookAppointment() {
                     width="100%"
                     height="300"
                     style={{ border: 0, borderRadius: "0.5rem" }}
-                    allowFullScreen=""
+                    allowFullScreen={true}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />

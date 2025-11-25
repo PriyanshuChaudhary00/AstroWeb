@@ -22,19 +22,19 @@ export default function Contact() {
     {
       icon: Phone,
       title: "Phone",
-      details: ["+91 98765 43210", "+91 98765 43211"],
-      action: "tel:+919876543210"
+      details: ["+91 85275 30910"],
+      action: "tel:+918527530910"
     },
     {
       icon: Mail,
       title: "Email",
-      details: ["info@divineastrology.com", "support@divineastrology.com"],
-      action: "mailto:info@divineastrology.com"
+      details: ["acharyaomshah@gmail.com"],
+      action: "mailto:acharyaomshah@gmail.com"
     },
     {
       icon: MapPin,
       title: "Address",
-      details: ["123 Spiritual Lane, Sector 45", "New Delhi, India - 110001"],
+      details: ["133 D, India Expo Plaza", "Knowledge Park II Metro", "Greater Noida, 201310"],
       action: null
     },
     {
@@ -149,11 +149,11 @@ export default function Contact() {
             <CardContent className="p-0">
               <div className="w-full h-96 bg-muted rounded-lg overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.2286857473704!2d77.20902931508037!3d28.614651982423927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd371d3e1aad%3A0x171e5be13611e773!2sConnaught%20Place%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1635789012345!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3603.8891485846584!2d77.59521672346898!3d28.474598574237747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce6cc0c00c001%3A0x1234567890ab!2s133%20D%2C%20India%20Expo%20Plaza%2C%20Knowledge%20Park%20II%2C%20Greater%20Noida%2C%20Uttar%20Pradesh%20201310!5e0!3m2!1sen!2sin!4v1700000000000"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
-                  allowFullScreen
+                  allowFullScreen={true}
                   loading="lazy"
                   title="Divine Astrology Location"
                   data-testid="map-location"
