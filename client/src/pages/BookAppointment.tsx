@@ -1,6 +1,5 @@
  import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,13 +18,24 @@ import panditImage from "@assets/file_1764066998875.png";
 export default function BookAppointment() {
   const { toast } = useToast();
   const { user, isAdmin, loading: authLoading } = useAuth();
-  const [location] = useLocation();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [consultationType, setConsultationType] = useState("Personal");
   const [isBooking, setIsBooking] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const service = params.get("service");
+    if (service) {
+      setSelectedService(service);
+      const foundService = services.find(s => s.id === service);
+      if (foundService) {
+        setConsultationType(foundService.name);
+      }
+    }
+  }, []);
 
   const timeSlots = [
     "10:00 AM", "11:00 AM", "12:00 PM",
@@ -102,20 +112,6 @@ export default function BookAppointment() {
   const filteredServices = selectedService 
     ? services.filter(s => s.id === selectedService)
     : services;
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.split('?')[1]);
-    const service = params.get("service");
-    if (service) {
-      setSelectedService(service);
-      const foundService = services.find(s => s.id === service);
-      if (foundService) {
-        setConsultationType(foundService.name);
-      }
-    } else {
-      setSelectedService(null);
-    }
-  }, [location]);
 
   // Fetch appointments for admin
   const { data: appointments = [], isLoading: appointmentsLoading, refetch } = useQuery<Appointment[]>({
