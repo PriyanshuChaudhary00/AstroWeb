@@ -7,6 +7,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { BlogSection } from "@/components/BlogSection";
 import { FAQSection } from "@/components/FAQSection";
+import remediesIcon from "@assets/dharma-4898937_640_1764074806576.webp";
 
 export default function Home() {
   const features = [
@@ -61,7 +62,7 @@ export default function Home() {
     {
       name: "Remedies",
       href: "/products/remedies",
-      image: "https://images.unsplash.com/photo-1600428821994-6a7c29d2b20b?w=400&h=300&fit=crop",
+      image: remediesIcon,
       description: "Spiritual remedy products"
     }
   ];
