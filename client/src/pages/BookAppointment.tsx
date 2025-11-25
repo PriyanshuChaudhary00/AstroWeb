@@ -30,6 +30,10 @@ export default function BookAppointment() {
     const service = params.get("service");
     if (service) {
       setSelectedService(service);
+      const foundService = services.find(s => s.id === service);
+      if (foundService) {
+        setConsultationType(foundService.name);
+      }
     }
   }, []);
 
@@ -475,29 +479,43 @@ export default function BookAppointment() {
                   </div>
 
                   {/* Services */}
-                  <div className="space-y-3">
-                    <Label>Select Service *</Label>
-                    <div className="space-y-3">
-                      {services.map((service) => (
-                        <div
-                          key={service.id}
-                          onClick={() => setConsultationType(service.name)}
-                          className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover-elevate ${
-                            consultationType === service.name
-                              ? "border-accent bg-accent/10"
-                              : "border-border bg-background"
-                          }`}
-                          data-testid={`button-service-${service.id}`}
-                        >
+                  {selectedService ? (
+                    <div className="space-y-3 p-4 rounded-lg border-2 border-accent bg-accent/10">
+                      {services.filter(s => s.id === selectedService).map((service) => (
+                        <div key={service.id}>
                           <div className="flex justify-between items-start gap-2 mb-2">
-                            <h3 className="font-semibold text-sm leading-tight flex-1">{service.name}</h3>
-                            <span className="text-accent font-bold text-sm whitespace-nowrap">{service.price}</span>
+                            <h3 className="font-semibold">{service.name}</h3>
+                            <span className="text-accent font-bold text-lg">{service.price}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed">{service.description}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <Label>Select Service *</Label>
+                      <div className="space-y-3">
+                        {services.map((service) => (
+                          <div
+                            key={service.id}
+                            onClick={() => setConsultationType(service.name)}
+                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover-elevate ${
+                              consultationType === service.name
+                                ? "border-accent bg-accent/10"
+                                : "border-border bg-background"
+                            }`}
+                            data-testid={`button-service-${service.id}`}
+                          >
+                            <div className="flex justify-between items-start gap-2 mb-2">
+                              <h3 className="font-semibold text-sm leading-tight flex-1">{service.name}</h3>
+                              <span className="text-accent font-bold text-sm whitespace-nowrap">{service.price}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{service.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Date Selection */}
                   <div className="space-y-2">
