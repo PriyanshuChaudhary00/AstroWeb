@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/authContext";
 import type { Appointment } from "@shared/schema";
 import { getAuthToken } from "@/lib/supabase";
+import panditImage from "@assets/file_1764065753978.enc";
 
 export default function BookAppointment() {
   const { toast } = useToast();
@@ -341,7 +342,7 @@ export default function BookAppointment() {
               <CardContent className="p-6 space-y-6">
                 <div className="text-center">
                   <Avatar className="w-24 h-24 mx-auto mb-4">
-                    <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" />
+                    <AvatarImage src={panditImage} alt="Acharya Om Shah Kashyap" />
                     <AvatarFallback>AOS</AvatarFallback>
                   </Avatar>
                   <h3 className="font-serif text-2xl font-bold mb-2" data-testid="text-astrologer-name">
