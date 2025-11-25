@@ -286,42 +286,110 @@ export class MemStorage implements IStorage {
 
   // Products
   async getAllProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
+    try {
+      const products = await getFromDb("products");
+      return Array.isArray(products) ? products : [];
+    } catch (error) {
+      console.error("Error fetching products from Supabase:", error);
+      return Array.from(this.products.values());
+    }
   }
 
   async getProductsByCategory(category: string): Promise<Product[]> {
-    return Array.from(this.products.values()).filter(
-      p => p.category.toLowerCase() === category.toLowerCase()
-    );
+    try {
+      const products = await getFromDb("products");
+      const productList = Array.isArray(products) ? products : [];
+      return productList.filter(
+        p => p.category.toLowerCase() === category.toLowerCase()
+      );
+    } catch (error) {
+      console.error("Error fetching products by category from Supabase:", error);
+      return Array.from(this.products.values()).filter(
+        p => p.category.toLowerCase() === category.toLowerCase()
+      );
+    }
   }
 
   async getProductById(id: string): Promise<Product | undefined> {
-    return this.products.get(id);
+    try {
+      const result = await supabaseDb
+        .from("products")
+        .select()
+        .eq("id", id)
+        .single();
+      return result.data || undefined;
+    } catch (error) {
+      console.error("Error fetching product by id:", error);
+      return this.products.get(id);
+    }
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const id = randomUUID();
-    const product: Product = { ...insertProduct, id };
-    this.products.set(id, product);
-    return product;
+    try {
+      const id = randomUUID();
+      const product = {
+        id,
+        ...insertProduct,
+        created_at: new Date().toISOString()
+      };
+      const result = await insertToDb("products", product);
+      return result as Product;
+    } catch (error) {
+      console.error("Error creating product in Supabase:", error);
+      const id = randomUUID();
+      const product: Product = { ...insertProduct, id };
+      this.products.set(id, product);
+      return product;
+    }
   }
 
   // Blog
   async getAllBlogPosts(): Promise<BlogPost[]> {
-    return Array.from(this.blogPosts.values()).sort(
-      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    );
+    try {
+      const posts = await getFromDb("blog_posts");
+      const postList = Array.isArray(posts) ? posts : [];
+      return postList.sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
+    } catch (error) {
+      console.error("Error fetching blog posts from Supabase:", error);
+      return Array.from(this.blogPosts.values()).sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
+    }
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
-    return Array.from(this.blogPosts.values()).find(p => p.slug === slug);
+    try {
+      const result = await supabaseDb
+        .from("blog_posts")
+        .select()
+        .eq("slug", slug)
+        .single();
+      return result.data || undefined;
+    } catch (error) {
+      console.error("Error fetching blog post by slug:", error);
+      return Array.from(this.blogPosts.values()).find(p => p.slug === slug);
+    }
   }
 
   async createBlogPost(insertPost: InsertBlogPost): Promise<BlogPost> {
-    const id = randomUUID();
-    const post: BlogPost = { ...insertPost, id };
-    this.blogPosts.set(id, post);
-    return post;
+    try {
+      const id = randomUUID();
+      const post = {
+        id,
+        ...insertPost,
+        created_at: new Date().toISOString()
+      };
+      const result = await insertToDb("blog_posts", post);
+      return result as BlogPost;
+    } catch (error) {
+      console.error("Error creating blog post in Supabase:", error);
+      const id = randomUUID();
+      const post: BlogPost = { ...insertPost, id };
+      this.blogPosts.set(id, post);
+      return post;
+    }
   }
 
   // Testimonials
