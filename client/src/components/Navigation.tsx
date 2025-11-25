@@ -56,6 +56,12 @@ export function Navigation({ cartItemCount }: NavigationProps) {
               </Button>
             </Link>
 
+            <Link href="/book-appointment">
+              <Button variant="ghost" size="sm" data-testid="link-book-appointment" className={location === "/book-appointment" ? "bg-accent/10" : ""}>
+                Book Consultation
+              </Button>
+            </Link>
+
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -79,12 +85,6 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-
-            <Link href="/book-appointment">
-              <Button variant="ghost" size="sm" data-testid="link-book-appointment" className={location === "/book-appointment" ? "bg-accent/10" : ""}>
-                Book Consultation
-              </Button>
-            </Link>
 
             <Link href="/blog">
               <Button variant="ghost" size="sm" data-testid="link-blog" className={location === "/blog" ? "bg-accent/10" : ""}>
@@ -170,6 +170,14 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                     </Link>
                   </div>
 
+                  <div className="border-t pt-4 space-y-1">
+                    <Link href="/book-appointment">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-appointment">
+                        Book Consultation
+                      </Button>
+                    </Link>
+                  </div>
+
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground px-2">Products</p>
                     {productCategories.map((category) => (
@@ -187,11 +195,6 @@ export function Navigation({ cartItemCount }: NavigationProps) {
                   </div>
 
                   <div className="border-t pt-4 space-y-1">
-                    <Link href="/book-appointment">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-appointment">
-                        Book Consultation
-                      </Button>
-                    </Link>
                     <Link href="/blog">
                       <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="link-mobile-blog">
                         Blogs
