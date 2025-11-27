@@ -4,11 +4,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Edit2, X, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { getAuthToken } from "@/lib/supabase";
+import { queryClient } from "@/lib/queryClient";
 import type { BlogPost } from "@shared/schema";
 
 export default function AdminBlog() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: "", excerpt: "", content: "", featuredImage: "" });
+  const { toast } = useToast();
 
   const { data: posts, isLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
@@ -35,14 +39,31 @@ export default function AdminBlog() {
 
   const handleAddPost = async () => {
     if (!formData.title || !formData.excerpt || !formData.content) {
-      alert("Please fill in all required fields");
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
       return;
     }
 
     try {
-      await fetch("/api/blog", {
+      const token = await getAuthToken();
+      if (!token) {
+        toast({
+          title: "Error",
+          description: "Authentication required. Please log in again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const response = await fetch("/api/blog", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           ...formData,
           slug: formData.title.toLowerCase().replace(/\s+/g, "-"),
@@ -54,10 +75,27 @@ export default function AdminBlog() {
           publishedAt: new Date()
         })
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create blog post");
+      }
+
+      toast({
+        title: "Success",
+        description: "Blog post created successfully!"
+      });
       setFormData({ title: "", excerpt: "", content: "", featuredImage: "" });
       setShowForm(false);
-    } catch (error) {
+      // Invalidate and refetch blog posts
+      await queryClient.invalidateQueries({ queryKey: ["/api/blog"] });
+    } catch (error: any) {
       console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create blog post",
+        variant: "destructive"
+      });
     }
   };
 
