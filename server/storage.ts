@@ -440,7 +440,7 @@ export class MemStorage implements IStorage {
   async getAllAppointments(): Promise<Appointment[]> {
     try {
       const data = await getFromDb("appointments");
-      const appointments = Array.isArray(data) ? data : [];
+      const appointments = Array.isArray(data) ? data.map(toCamelCase) : [];
       return appointments.map((apt: any) => ({
         ...apt,
         status: apt.status || "pending"
@@ -456,11 +456,12 @@ export class MemStorage implements IStorage {
       const id = randomUUID();
       const appointment = {
         id,
-        ...insertAppointment,
-        created_at: new Date().toISOString()
+        ...insertAppointment
       };
-      const result = await insertToDb("appointments", appointment);
-      return result as Appointment;
+      // Convert to snake_case for Supabase
+      const snakeCaseAppointment = toSnakeCase(appointment);
+      const result = await insertToDb("appointments", snakeCaseAppointment);
+      return toCamelCase(result) as Appointment;
     } catch (error) {
       console.error("Error creating appointment in Supabase:", error);
       const id = randomUUID();
@@ -481,7 +482,7 @@ export class MemStorage implements IStorage {
         .select()
         .eq("id", id)
         .single();
-      const apt = result.data;
+      const apt = result.data ? toCamelCase(result.data) : result.data;
       if (!apt) return undefined;
       return {
         ...apt,
