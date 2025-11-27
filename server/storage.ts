@@ -11,6 +11,36 @@ import type {
 } from "@shared/schema";
 import { supabaseDb, insertToDb, getFromDb } from "./supabase";
 
+// Helper function to convert camelCase to snake_case for Supabase
+function toSnakeCase(obj: any): any {
+  if (Array.isArray(obj)) return obj;
+  if (obj === null || typeof obj !== 'object') return obj;
+  
+  const result: any = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+      result[snakeKey] = obj[key];
+    }
+  }
+  return result;
+}
+
+// Helper function to convert snake_case to camelCase
+function toCamelCase(obj: any): any {
+  if (Array.isArray(obj)) return obj.map(toCamelCase);
+  if (obj === null || typeof obj !== 'object') return obj;
+  
+  const result: any = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      result[camelKey] = obj[key];
+    }
+  }
+  return result;
+}
+
 export interface IStorage {
   // Products
   getAllProducts(): Promise<Product[]>;
@@ -288,7 +318,7 @@ export class MemStorage implements IStorage {
   async getAllProducts(): Promise<Product[]> {
     try {
       const products = await getFromDb("products");
-      return Array.isArray(products) ? products : [];
+      return Array.isArray(products) ? products.map(toCamelCase) : [];
     } catch (error) {
       console.error("Error fetching products from Supabase:", error);
       return Array.from(this.products.values());
@@ -298,7 +328,7 @@ export class MemStorage implements IStorage {
   async getProductsByCategory(category: string): Promise<Product[]> {
     try {
       const products = await getFromDb("products");
-      const productList = Array.isArray(products) ? products : [];
+      const productList = Array.isArray(products) ? products.map(toCamelCase) : [];
       return productList.filter(
         p => p.category.toLowerCase() === category.toLowerCase()
       );
@@ -317,7 +347,7 @@ export class MemStorage implements IStorage {
         .select()
         .eq("id", id)
         .single();
-      return result.data || undefined;
+      return result.data ? toCamelCase(result.data) : undefined;
     } catch (error) {
       console.error("Error fetching product by id:", error);
       return this.products.get(id);
@@ -329,11 +359,12 @@ export class MemStorage implements IStorage {
       const id = randomUUID();
       const product = {
         id,
-        ...insertProduct,
-        created_at: new Date().toISOString()
+        ...insertProduct
       };
-      const result = await insertToDb("products", product);
-      return result as Product;
+      // Convert to snake_case for Supabase
+      const snakeCaseProduct = toSnakeCase(product);
+      const result = await insertToDb("products", snakeCaseProduct);
+      return toCamelCase(result) as Product;
     } catch (error) {
       console.error("Error creating product in Supabase:", error);
       const id = randomUUID();
@@ -347,7 +378,7 @@ export class MemStorage implements IStorage {
   async getAllBlogPosts(): Promise<BlogPost[]> {
     try {
       const posts = await getFromDb("blog_posts");
-      const postList = Array.isArray(posts) ? posts : [];
+      const postList = Array.isArray(posts) ? posts.map(toCamelCase) : [];
       return postList.sort(
         (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
       );
@@ -366,7 +397,7 @@ export class MemStorage implements IStorage {
         .select()
         .eq("slug", slug)
         .single();
-      return result.data || undefined;
+      return result.data ? toCamelCase(result.data) : undefined;
     } catch (error) {
       console.error("Error fetching blog post by slug:", error);
       return Array.from(this.blogPosts.values()).find(p => p.slug === slug);
@@ -378,11 +409,12 @@ export class MemStorage implements IStorage {
       const id = randomUUID();
       const post = {
         id,
-        ...insertPost,
-        created_at: new Date().toISOString()
+        ...insertPost
       };
-      const result = await insertToDb("blog_posts", post);
-      return result as BlogPost;
+      // Convert to snake_case for Supabase
+      const snakeCasePost = toSnakeCase(post);
+      const result = await insertToDb("blog_posts", snakeCasePost);
+      return toCamelCase(result) as BlogPost;
     } catch (error) {
       console.error("Error creating blog post in Supabase:", error);
       const id = randomUUID();
@@ -518,7 +550,7 @@ export class MemStorage implements IStorage {
   async getAllVideos(): Promise<Video[]> {
     try {
       const videos = await getFromDb("videos");
-      return videos || [];
+      return Array.isArray(videos) ? videos.map(toCamelCase) : [];
     } catch (error) {
       console.error("Error fetching videos from Supabase:", error);
       return Array.from(this.videos.values());
@@ -530,11 +562,12 @@ export class MemStorage implements IStorage {
       const id = randomUUID();
       const video = {
         id,
-        ...insertVideo,
-        created_at: new Date().toISOString()
+        ...insertVideo
       };
-      const result = await insertToDb("videos", video);
-      return result as Video;
+      // Convert to snake_case for Supabase
+      const snakeCaseVideo = toSnakeCase(video);
+      const result = await insertToDb("videos", snakeCaseVideo);
+      return toCamelCase(result) as Video;
     } catch (error) {
       console.error("Error creating video in Supabase:", error);
       const id = randomUUID();
