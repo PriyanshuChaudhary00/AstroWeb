@@ -6,7 +6,7 @@ Divine Astrology is a premium e-commerce platform for spiritual products and ast
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+Preferred communication style: Simple, everyday language. 
 
 ## System Architecture
 
