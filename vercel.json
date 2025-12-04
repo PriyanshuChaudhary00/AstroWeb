@@ -1,0 +1,8 @@
+{
+  "projects": [],
+  "builds": [
+    { "src": "client/package.json", "use": "@vercel/next" }
+  ],
+  "ignoreCommand": "echo ignoring server folder",
+  "outputDirectory": "client/.next"
+}
